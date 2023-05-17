@@ -237,6 +237,30 @@ class PlanRequestViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    // sixth form elements
+    let generatePlanInfoLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .center
+        label.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 22.0)
+        label.text = "All set! Let's generate your plan!"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    let generatePlanButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("GENERATE PLAN", for: .normal)
+        button.titleLabel?.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 17.0)
+        button.backgroundColor = UIColor(named: "dark-red")
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(generatePlan), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
 
     override func viewDidLoad() {
 
@@ -500,6 +524,22 @@ class PlanRequestViewController: UIViewController {
     @objc func processFifthForm() {
         // set struct instance value
         workoutPlanRequest.goal = goalField.text!
+        // clear form and proceed
+        formStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+        arrangeSixthForm()
+    }
+    
+    @objc func arrangeSixthForm() {
+        // initialize stack views
+        formStack.addArrangedSubview(generatePlanInfoLabel)
+        formStack.addArrangedSubview(generatePlanButton)
+        
+        setupConstraintsSixthForm()
+    }
+    
+    @objc func generatePlan() {
         // send request
         sendWorkoutPlanRequest()
     }
@@ -581,6 +621,12 @@ class PlanRequestViewController: UIViewController {
         goalField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         goalSubmitButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+    }
+    
+    func setupConstraintsSixthForm() {
+        generatePlanInfoLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
+        
+        generatePlanButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
     }
 }
 

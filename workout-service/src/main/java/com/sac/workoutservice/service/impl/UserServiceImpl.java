@@ -25,11 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CommonResponse login(LoginRequestDao loginRequest) {
-        Optional<User> user = userRepository.findByUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user.isPresent()) {
-            return new CommonResponse(Response.SUCCESS);
-        } else {
-            return new CommonResponse(Response.NOT_FOUND);
-        }
+        Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
+        return user.map(value -> value.getPassword().equals(loginRequest.getPassword()) ? new CommonResponse(Response.SUCCESS) : new CommonResponse(Response.UNAUTHORIZED))
+                .orElseGet(() -> new CommonResponse(Response.NOT_FOUND));
     }
 }

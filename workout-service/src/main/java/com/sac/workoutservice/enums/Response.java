@@ -6,9 +6,9 @@ package com.sac.workoutservice.enums;
  */
 public enum Response {
 
-    SUCCESS(Boolean.TRUE, 1, "Success"),
-    FAILED(Boolean.FALSE, 2, "Failed with unhandled error"),
-    NOT_FOUND(Boolean.FALSE, 3, "Can not find request details");
+    SUCCESS(Boolean.TRUE, 200, "Success"),
+    FAILED(Boolean.FALSE, 500, "Failed with unhandled error"),
+    NOT_FOUND(Boolean.FALSE, 404, "Can not find request details");
 
     private final boolean isOk;
     private final int responseCode;

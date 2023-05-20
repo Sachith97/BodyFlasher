@@ -1,7 +1,7 @@
 package com.sac.workoutservice.model;
 
-import com.sac.workoutservice.enums.WorkoutMode;
-import com.sac.workoutservice.enums.WorkoutTarget;
+import com.sac.workoutservice.enums.WorkoutExperience;
+import com.sac.workoutservice.enums.WorkoutGoal;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,12 +30,12 @@ public class WorkoutPlan implements Serializable {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "WORKOUT_MODE", nullable = false)
-    private WorkoutMode workoutMode;
+    @Column(name = "EXPERIENCE", nullable = false)
+    private WorkoutExperience experience;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TARGET_AREA", nullable = false)
-    private WorkoutTarget targetArea;
+    @Column(name = "WORKOUT_GOAL", nullable = false)
+    private WorkoutGoal workoutGoal;
 
     @Column(name = "WORKOUT_NAME", length = 100)
     private String workoutName;

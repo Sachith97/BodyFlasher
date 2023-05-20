@@ -1,7 +1,5 @@
 package com.sac.workoutservice.model;
 
-import com.sac.workoutservice.enums.WorkoutExperience;
-import com.sac.workoutservice.enums.WorkoutGoal;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +7,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Sachith Harshamal
@@ -20,8 +18,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "USER_WORKOUT")
-public class UserWorkout implements Serializable {
+@Table(name = "USER_WORKOUT_DETAIL")
+public class UserWorkoutDetail implements Serializable {
 
     protected static final long serialVersionUID = 1L;
 
@@ -30,24 +28,28 @@ public class UserWorkout implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "EXPERIENCE", nullable = false)
-    private WorkoutExperience experience;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "STARTED_DATE")
+    private Date startedDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "WORKOUT_GOAL", nullable = false)
-    private WorkoutGoal workoutGoal;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "COMPLETED_DATE")
+    private Date completedDate;
+
+    @Column(name = "COMPLETED_SECONDS")
+    private Integer completedSeconds;
 
     @ManyToOne
-    @JoinColumn(name = "FK_USER")
-    private User fkUser;
+    @JoinColumn(name = "FK_USER_WORKOUT")
+    private UserWorkout fkUserWorkout;
 
-    @OneToMany(mappedBy = "fkUserWorkout")
-    private List<UserWorkoutDetail> workoutList;
+    @OneToOne
+    @JoinColumn(name = "FK_WORKOUT_PLAN")
+    private WorkoutPlan fkWorkoutPlan;
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof UserWorkout other)) {
+        if (!(object instanceof UserWorkoutDetail other)) {
             return false;
         }
         return !((this.getId() == null && other.getId() != null) ||

@@ -1,5 +1,8 @@
 package com.sac.workoutservice.service;
 
+import com.sac.workoutservice.dao.UserWorkoutDao;
+import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
+import com.sac.workoutservice.exception.CommonResponse;
 import com.sac.workoutservice.model.WorkoutPlan;
 
 import java.util.List;
@@ -11,4 +14,8 @@ import java.util.List;
 public interface WorkoutService {
 
     List<WorkoutPlan> getWorkoutList();
+
+    CommonResponse saveWorkoutPlanRequest(WorkoutPlanRequestDao workoutPlanRequest);
+
+    List<UserWorkoutDao> getUserWorkoutList(String username);
 }

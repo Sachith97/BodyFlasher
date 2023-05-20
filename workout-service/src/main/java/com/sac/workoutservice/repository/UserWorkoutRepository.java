@@ -1,8 +1,11 @@
 package com.sac.workoutservice.repository;
 
+import com.sac.workoutservice.model.User;
 import com.sac.workoutservice.model.UserWorkout;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Sachith Harshamal
@@ -10,4 +13,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserWorkoutRepository extends JpaRepository<UserWorkout, Long> {
+
+    List<UserWorkout> findByFkUser(User user);
 }

@@ -17,7 +17,7 @@ class NetworkManager {
     
     func login(username: String, password: String, completion: @escaping (Result<LoginResponse, Error>) -> Void) {
         // API endpoint URL
-        guard let url = URL(string: baseURL + "/user/login") else {
+        guard let url = URL(string: baseURL + "/auth/login") else {
             DispatchQueue.main.async {
                 completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             }

@@ -12,11 +12,11 @@ struct LoginResponse: Decodable {
     var ok: Bool?
     var responseCode: Int?
     var responseMessage: String?
-    var responseObject: User?
+    var responseObject: LoginResponseDetail?
     
     init () { }
     
-    init (ok: Bool, responseCode: Int, responseMessage: String, responseObject: User) {
+    init (ok: Bool, responseCode: Int, responseMessage: String, responseObject: LoginResponseDetail) {
         self.ok = ok
         self.responseCode = responseCode
         self.responseMessage = responseMessage

@@ -90,7 +90,6 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    let forgotPasswordTapGesture = UITapGestureRecognizer(target: self, action: #selector(forgotPassword))
     let forgotPasswordLabel : UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -117,6 +116,7 @@ class LoginViewController: UIViewController {
         self.view.backgroundColor = .black
         
         // add tap gesture for forgot password label
+        let forgotPasswordTapGesture = UITapGestureRecognizer(target: self, action: #selector(forgotPassword))
         forgotPasswordLabel.isUserInteractionEnabled = true
         forgotPasswordLabel.addGestureRecognizer(forgotPasswordTapGesture)
         
@@ -169,6 +169,7 @@ class LoginViewController: UIViewController {
                         if (response.ok!) {
                             // proceed
                             let planRequestVC = PlanRequestViewController()
+                            planRequestVC.authDetail = response.responseObject!
                             self.navigationController?.pushViewController(planRequestVC, animated: true)
                         } else {
                             self.createAlert(title: "Error", message: response.responseMessage!)

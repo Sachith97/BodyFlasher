@@ -13,6 +13,8 @@ import AVFoundation
 
 class PlanRequestViewController: UIViewController {
     
+    var authDetail: LoginResponseDetail = LoginResponseDetail()
+    
     // av player properties
     var avPlayer: AVPlayer!
     var avPlayerLayer: AVPlayerLayer!
@@ -23,7 +25,7 @@ class PlanRequestViewController: UIViewController {
     
     var heightData: [String] = []
     var weightData: [String] = []
-    var goalData = ["ABS", "BACK", "BICEPS", "CHEST", "TRICEPS", "LEGS"]
+    var goalData = ["Cardio", "Shoulders", "Biceos", "Chest", "Abs", "Forearms", "Triceps", "Lower Back", "Quads", "Calves"]
     
     var workoutPlanRequest = WorkoutPlanRequest()
     var networkManager = NetworkManager()

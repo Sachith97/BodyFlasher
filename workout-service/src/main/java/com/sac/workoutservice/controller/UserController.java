@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * @created 2023-03-15
  */
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/api/v1/user")
 public class UserController {
 

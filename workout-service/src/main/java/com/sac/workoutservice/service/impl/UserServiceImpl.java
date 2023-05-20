@@ -24,9 +24,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
     public CommonResponse login(LoginRequestDao loginRequest) {
-        Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
-        return user.map(value -> value.getPassword().equals(loginRequest.getPassword()) ? new CommonResponse(Response.SUCCESS) : new CommonResponse(Response.UNAUTHORIZED))
-                .orElseGet(() -> new CommonResponse(Response.NOT_FOUND));
+        Optional<User> user = this.findUserByUsername(loginRequest.getUsername());
+        return user.filter(value -> value.getPassword().equals(loginRequest.getPassword())).map(value ->
+                new CommonResponse(Response.SUCCESS, user.get())).orElseGet(() ->
+                CommonResponse.builder()
+                        .isOk(Boolean.FALSE)
+                        .responseCode(404)
+                        .responseMessage("Incorrect username or password")
+                        .responseObject(null)
+                        .build()
+        );
     }
 }

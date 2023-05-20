@@ -39,10 +39,13 @@ public class User implements Serializable {
     @Column(name = "AGE")
     private Integer age;
 
-    @Column(name = "WEIGHT", columnDefinition = "decimal(3,2)")
-    private Double weight;
+    @Column(name = "WEIGHT")
+    private Integer weight;
 
-    @Column(name = "USERNAME", length = 20)
+    @Column(name = "HEIGHT")
+    private Integer height;
+
+    @Column(name = "USERNAME", unique = true, length = 20)
     private String username;
 
     @Column(name = "PASSWORD")

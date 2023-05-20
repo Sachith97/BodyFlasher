@@ -35,6 +35,7 @@ class LoginViewController: UIViewController {
         let textField = UITextField()
         textField.textAlignment = .center
         textField.placeholder = "Username"
+        textField.autocapitalizationType = UITextAutocapitalizationType.none
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         textField.textColor = .white
         textField.layer.cornerRadius = 10
@@ -47,6 +48,7 @@ class LoginViewController: UIViewController {
         textField.textAlignment = .center
         textField.placeholder = "Password"
         textField.isSecureTextEntry = true
+        textField.autocapitalizationType = UITextAutocapitalizationType.none
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         textField.textColor = .white
         textField.layer.cornerRadius = 10
@@ -135,19 +137,69 @@ class LoginViewController: UIViewController {
         } else if (passwordField.text!.isEmpty) {
             createAlert(title: nil, message: "Please enter password")
         } else {
-            // initialize waiting indicator
-            // let waitingIndicator = self.waitingIndicator()
+//            // initialize waiting indicator
+//            let waitingIndicator = self.waitingIndicator()
             // get API response
-            let response = networkManager.login(username: usernameField.text!, password: passwordField.text!)
-            // kill waiting indicator on response
-            // self.killWaitingIndicator(waitingIndicator: waitingIndicator)
-            // response validation
-            if (response.isOk!) {
-                // proceed
-                let planRequestVC = PlanRequestViewController()
-                self.navigationController?.pushViewController(planRequestVC, animated: true)
-            } else {
-                createAlert(title: "Error", message: response.responseMessage!)
+            networkManager.login(username: usernameField.text!, password: passwordField.text!) { result in
+                switch result {
+                case .success(let response):
+                    // handle response on main thread
+                    DispatchQueue.main.async {
+//                        // kill waiting indicator on response
+//                        self.killWaitingIndicator(waitingIndicator: waitingIndicator) { result in
+//                            switch result {
+//                            case.success(true):
+//                                // response validation
+//                                if (response.ok!) {
+//                                    // proceed
+//                                    let planRequestVC = PlanRequestViewController()
+//                                    self.navigationController?.pushViewController(planRequestVC, animated: true)
+//                                } else {
+//                                    self.createAlert(title: "Error", message: response.responseMessage!)
+//                                }
+//                                break
+//                            case .success(false):
+//                                break
+//                            case .failure(_):
+//                                break
+//                            }
+//                        }
+                        
+                        // response validation
+                        if (response.ok!) {
+                            // proceed
+                            let planRequestVC = PlanRequestViewController()
+                            self.navigationController?.pushViewController(planRequestVC, animated: true)
+                        } else {
+                            self.createAlert(title: "Error", message: response.responseMessage!)
+                        }
+                    }
+                    break
+                case .failure(let error):
+                    // handle response on main thread
+                    DispatchQueue.main.async {
+//                        // kill waiting indicator on response
+//                        self.killWaitingIndicator(waitingIndicator: waitingIndicator) { result in
+//                            switch result {
+//                            case.success(true):
+//                                // error handle
+//                                print("Error occurred: \(error.localizedDescription)")
+//                                self.createAlert(title: "Error", message: "Error occurred")
+//                                break
+//                            case .success(false):
+//                                break
+//                            case .failure(_):
+//                                break
+//                            }
+//                        }
+                        
+                        // error handle
+                        print("Error occurred: \(error.localizedDescription)")
+                        self.createAlert(title: "Error", message: "Error occurred")
+                    }
+                    break
+                }
+                
             }
         }
     }
@@ -211,13 +263,14 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: UITextFieldDelegate {
     
-    // validate text field length
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // validate text field length
         let maxLength = 15
         let currentString: NSString = (textField.text ?? "") as NSString
         let newString: NSString =  currentString.replacingCharacters(in: range, with: string) as NSString
-
-        return newString.length <= maxLength
+        let lengthValidation = newString.length <= maxLength
+        // validate character case if length validation is ok
+        return lengthValidation == false ? false : (string.rangeOfCharacter(from: .uppercaseLetters) == nil)
     }
 }
 
@@ -234,9 +287,10 @@ extension LoginViewController {
         return alert
     }
     
-    func killWaitingIndicator(waitingIndicator: UIAlertController) {
+    func killWaitingIndicator(waitingIndicator: UIAlertController, completion: @escaping (Result<Bool, Error>) -> Void) {
         DispatchQueue.main.async {
             waitingIndicator.dismiss(animated: true, completion: nil)
+            completion(.success(true))
         }
     }
 }

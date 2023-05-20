@@ -27,7 +27,7 @@ class NavigationViewController: UIViewController {
         setupConstraints()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.goToPlanRequestScreen()
+            self.goToLoginScreen()
         }
     }
 
@@ -38,8 +38,8 @@ class NavigationViewController: UIViewController {
         labelName.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
-    func goToPlanRequestScreen() {
-        let nextVC = PlanRequestViewController()
+    func goToLoginScreen() {
+        let nextVC = LoginViewController()
         navigationController?.pushViewController(nextVC, animated: true)
     }
     

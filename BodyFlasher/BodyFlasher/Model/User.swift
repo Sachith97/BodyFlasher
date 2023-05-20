@@ -12,6 +12,7 @@ struct User: Decodable {
     var firstName: String?
     var lastName: String?
     var email: String?
+    var profession: String?
     var age: Int?
     var weight: Int?
     var height: Int?
@@ -19,10 +20,11 @@ struct User: Decodable {
     
     init () { }
     
-    init (firstName: String? = nil, lastName: String? = nil, email: String? = nil, age: Int? = nil, weight: Int?, height: Int?, username: String? = nil) {
+    init (firstName: String? = nil, lastName: String? = nil, email: String? = nil, profession: String? = nil, age: Int? = nil, weight: Int?, height: Int?, username: String? = nil) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
+        self.profession = profession
         self.age = age
         self.weight = weight
         self.height = height

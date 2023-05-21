@@ -99,6 +99,32 @@ class NetworkManager {
             }
         }
     }
+    
+    func saveCustomWorkout(jwt: String, exerciseData: ExerciseData, completion: @escaping (Result<Response, Error>) -> Void) {
+        
+        let headers = [
+            "Authorization": "Bearer " + jwt,
+            "Content-Type": "application/json"
+        ]
+        
+        let requestBody: [String: Any] = [
+            "exerciseId": exerciseData.id,
+            "requestedSeconds": exerciseData.allocatedSeconds
+        ]
+        
+        getAPIResponse(body: requestBody, requestURL: baseURL + "/workouts/request/custom", httpMethod: "POST", headers: headers, model: Response.self) { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    completion(.success(response))
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 
     private func getAPIResponse<T: Decodable>(body: [String: Any]? = nil, requestURL: String, httpMethod: String, headers: [String: String], model: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
         

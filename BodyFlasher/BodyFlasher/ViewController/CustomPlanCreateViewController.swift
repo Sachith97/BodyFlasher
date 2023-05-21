@@ -438,12 +438,32 @@ class CustomPlanCreateViewController: UIViewController {
     }
     
     @objc func addToCustomeList() {
-        let alert = UIAlertController(title: nil, message: "Successful", preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
-            self.goBackToExerciseSelection()
-            self.goBackToGoalSelection()
-        })
-        self.present(alert, animated: true, completion: nil)
+        networkManager.saveCustomWorkout(jwt: authDetail.jwt ?? "", exerciseData: selectedExerciseData) { result in
+            switch result {
+            case .success(let response):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    if(response.ok ?? false) {
+                        let alert = UIAlertController(title: nil, message: "Successful", preferredStyle: UIAlertController.Style.alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
+                            self.goBackToExerciseSelection()
+                            self.goBackToGoalSelection()
+                        })
+                        self.present(alert, animated: true, completion: nil)
+                    } else {
+                        self.createAlert(title: "Error", message: "Error occurred")
+                    }
+                }
+                break
+            case .failure(let error):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    // error handle
+                    print("Error occurred: \(error.localizedDescription)")
+                }
+                break
+            }
+        }
     }
     
     @objc func goBackToExerciseSelection() {
@@ -495,6 +515,12 @@ class CustomPlanCreateViewController: UIViewController {
             exerciseListView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             exerciseListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
+    }
+    
+    func createAlert(title: String?, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func setupExerciseInfoConstraints() {

@@ -9,7 +9,7 @@ import Foundation
 
 struct ExerciseData {
     
-    var id: Int?
+    var id: Int
     var title: String
     var image: String
     var info: String

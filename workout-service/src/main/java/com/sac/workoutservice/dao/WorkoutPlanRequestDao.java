@@ -16,5 +16,4 @@ public class WorkoutPlanRequestDao {
     private Integer height;
     private Integer weight;
     private String goal;
-    private String jwt;
 }

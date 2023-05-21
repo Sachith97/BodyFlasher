@@ -13,7 +13,6 @@ import com.sac.workoutservice.model.WorkoutPlan;
 import com.sac.workoutservice.repository.UserWorkoutDetailRepository;
 import com.sac.workoutservice.repository.UserWorkoutRepository;
 import com.sac.workoutservice.repository.WorkoutPlanRepository;
-import com.sac.workoutservice.service.JwtTokenService;
 import com.sac.workoutservice.service.UserService;
 import com.sac.workoutservice.service.WorkoutService;
 import com.sac.workoutservice.util.DateUtil;
@@ -35,15 +34,13 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final WorkoutPlanRepository workoutPlanRepository;
     private final UserWorkoutRepository userWorkoutRepository;
     private final UserWorkoutDetailRepository userWorkoutDetailRepository;
-    private final JwtTokenService jwtTokenService;
 
     private final UserService userService;
 
-    public WorkoutServiceImpl(WorkoutPlanRepository workoutPlanRepository, UserWorkoutRepository userWorkoutRepository, UserWorkoutDetailRepository userWorkoutDetailRepository, JwtTokenService jwtTokenService, UserService userService) {
+    public WorkoutServiceImpl(WorkoutPlanRepository workoutPlanRepository, UserWorkoutRepository userWorkoutRepository, UserWorkoutDetailRepository userWorkoutDetailRepository, UserService userService) {
         this.workoutPlanRepository = workoutPlanRepository;
         this.userWorkoutRepository = userWorkoutRepository;
         this.userWorkoutDetailRepository = userWorkoutDetailRepository;
-        this.jwtTokenService = jwtTokenService;
         this.userService = userService;
     }
 
@@ -54,9 +51,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     public CommonResponse saveWorkoutPlanRequest(WorkoutPlanRequestDao workoutPlanRequest) {
-        Optional<User> user = userService.findUserByUsername(
-                jwtTokenService.extractUsername(workoutPlanRequest.getJwt())
-        );
+        Optional<User> user = userService.getLoggedInUser();
         if (!user.isPresent()) {
             return new CommonResponse(Response.NOT_FOUND);
         }

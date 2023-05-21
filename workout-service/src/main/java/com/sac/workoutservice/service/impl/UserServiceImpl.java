@@ -4,8 +4,10 @@ import com.sac.workoutservice.dao.LoginRequestDao;
 import com.sac.workoutservice.enums.Response;
 import com.sac.workoutservice.exception.CommonResponse;
 import com.sac.workoutservice.model.User;
+import com.sac.workoutservice.model.UserPrincipal;
 import com.sac.workoutservice.repository.UserRepository;
 import com.sac.workoutservice.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +23,14 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public Optional<User> getLoggedInUser() {
+        // get username from application context
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal instanceof UserPrincipal ? ((UserPrincipal) principal).getUsername() : principal.toString();
+        return this.findUserByUsername(username);
     }
 
     @Override

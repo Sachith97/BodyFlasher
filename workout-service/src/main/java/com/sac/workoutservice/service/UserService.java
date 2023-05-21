@@ -12,6 +12,8 @@ import java.util.Optional;
  */
 public interface UserService {
 
+    Optional<User> getLoggedInUser();
+
     Optional<User> findUserByUsername(String username);
 
     CommonResponse login(LoginRequestDao loginRequest);

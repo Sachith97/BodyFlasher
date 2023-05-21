@@ -25,7 +25,7 @@ class PlanRequestViewController: UIViewController {
     
     var heightData: [String] = []
     var weightData: [String] = []
-    var goalData = ["Cardio", "Shoulders", "Biceos", "Chest", "Abs", "Forearms", "Triceps", "Lower Back", "Quads", "Calves"]
+    var goalData = ["Cardio", "Shoulders", "Biceps", "Chest", "Abs", "Forearms", "Triceps", "Lower Back", "Quads", "Calves"]
     
     var workoutPlanRequest = WorkoutPlanRequest()
     var networkManager = NetworkManager()

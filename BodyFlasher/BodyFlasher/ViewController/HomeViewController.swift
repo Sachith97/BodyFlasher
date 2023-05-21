@@ -146,8 +146,8 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // hide default back icon
-        self.navigationItem.setHidesBackButton(true, animated: true)
+        // hide default nav bar
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         
         // set background image
         self.view.insertSubview(backgroundView, at: 0)
@@ -195,6 +195,11 @@ class HomeViewController: UIViewController {
         setupConstraints()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
 //    @objc func didTapMenuButton() {
 //        delegate?.didTapMenuButton()
 //    }
@@ -204,7 +209,9 @@ class HomeViewController: UIViewController {
     }
     
     @objc func goToCustomPlanCreate(_ gesture: UITapGestureRecognizer) {
-        
+        let customPlanCreateVC = CustomPlanCreateViewController()
+        customPlanCreateVC.headerText = "CUSTOM PLANS"
+        self.navigationController?.pushViewController(customPlanCreateVC, animated: true)
     }
     
     func setupConstraints() {
@@ -214,7 +221,7 @@ class HomeViewController: UIViewController {
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            userDetailHeader.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            userDetailHeader.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             userDetailHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             userDetailHeader.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             

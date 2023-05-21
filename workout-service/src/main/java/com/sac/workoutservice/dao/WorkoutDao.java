@@ -13,9 +13,9 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class UserWorkoutDao {
+public class WorkoutDao {
 
     private String goal;
     private String experience;
-    private List<UserWorkoutDetailDao> workoutList;
+    private List<WorkoutDetailDao> workoutList;
 }

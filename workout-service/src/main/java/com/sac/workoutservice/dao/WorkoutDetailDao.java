@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class UserWorkoutDetailDao {
+public class WorkoutDetailDao {
 
     private String workoutName;
     private String instructions;

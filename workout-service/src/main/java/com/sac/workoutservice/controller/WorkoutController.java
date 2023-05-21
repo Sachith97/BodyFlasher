@@ -1,9 +1,8 @@
 package com.sac.workoutservice.controller;
 
-import com.sac.workoutservice.dao.UserWorkoutDao;
+import com.sac.workoutservice.dao.WorkoutDao;
 import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
 import com.sac.workoutservice.exception.CommonResponse;
-import com.sac.workoutservice.model.WorkoutPlan;
 import com.sac.workoutservice.service.WorkoutService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class WorkoutController {
     }
 
     @GetMapping(path = "/", produces = {"application/json"})
-    public List<WorkoutPlan> findWorkouts() {
+    public List<WorkoutDao> findWorkouts() {
         return workoutService.getWorkoutList();
     }
 
@@ -35,7 +34,7 @@ public class WorkoutController {
     }
 
     @GetMapping(path = "/user/workouts", produces = {"application/json"}, consumes = {"application/json"})
-    public List<UserWorkoutDao> getUserWorkoutPlans() {
+    public List<WorkoutDao> getUserWorkoutPlans() {
         return workoutService.getUserWorkoutList();
     }
 

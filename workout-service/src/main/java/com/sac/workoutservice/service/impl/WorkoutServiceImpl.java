@@ -1,7 +1,7 @@
 package com.sac.workoutservice.service.impl;
 
-import com.sac.workoutservice.dao.UserWorkoutDao;
-import com.sac.workoutservice.dao.UserWorkoutDetailDao;
+import com.sac.workoutservice.dao.WorkoutDao;
+import com.sac.workoutservice.dao.WorkoutDetailDao;
 import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
 import com.sac.workoutservice.enums.Response;
 import com.sac.workoutservice.enums.WorkoutGoal;
@@ -19,9 +19,7 @@ import com.sac.workoutservice.util.DateUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,8 +44,12 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public List<WorkoutPlan> getWorkoutList() {
-        return workoutPlanRepository.findAll();
+    public List<WorkoutDao> getWorkoutList() {
+        Map<WorkoutGoal, List<WorkoutPlan>> planListMap =
+                workoutPlanRepository.findAll()
+                        .stream()
+                        .collect(Collectors.groupingBy(WorkoutPlan::getWorkoutGoal));
+        return extractMasterWorkoutInfo(planListMap);
     }
 
     @Override
@@ -86,20 +88,48 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public List<UserWorkoutDao> getUserWorkoutList() {
+    public List<WorkoutDao> getUserWorkoutList() {
         Optional<User> user = userService.getLoggedInUser();
         if (!user.isPresent()) {
             return null;
         }
         List<UserWorkout> workoutList = userWorkoutRepository.findByFkUser(user.get());
         return workoutList.stream()
-                .map(this::extractWorkoutInfo)
+                .map(this::extractUserWorkoutInfo)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getGoalList() {
         return Stream.of(WorkoutGoal.values()).map(WorkoutGoal::getName).collect(Collectors.toList());
+    }
+
+    private List<WorkoutDao> extractMasterWorkoutInfo(Map<WorkoutGoal, List<WorkoutPlan>> planListMap) {
+        List<WorkoutDao> workoutDaoList = new ArrayList<>();
+        planListMap.forEach((goal, planList) -> workoutDaoList.add(
+                WorkoutDao.builder()
+                        .goal(goal.getName())
+                        .experience(null)
+                        .workoutList(
+                                planList.stream()
+                                        .map(this::extractMasterWorkoutDetailInfo)
+                                        .collect(Collectors.toList())
+                        )
+                        .build()
+        ));
+        return workoutDaoList;
+    }
+
+    private WorkoutDetailDao extractMasterWorkoutDetailInfo(WorkoutPlan workoutPlan) {
+        return WorkoutDetailDao.builder()
+                .workoutName(workoutPlan.getWorkoutName())
+                .instructions(workoutPlan.getInstructions())
+                .day(workoutPlan.getDay())
+                .allocatedSeconds(workoutPlan.getAllocatedSeconds())
+                .completedSeconds(0)
+                .imageName(workoutPlan.getImageName())
+                .resourceURL(workoutPlan.getResourceURL())
+                .build();
     }
 
     private int calculateAge(int timeStamp) {
@@ -121,20 +151,20 @@ public class WorkoutServiceImpl implements WorkoutService {
         userWorkoutDetailRepository.save(userWorkoutDetail);
     }
 
-    private UserWorkoutDao extractWorkoutInfo(UserWorkout userWorkout) {
-        return UserWorkoutDao.builder()
+    private WorkoutDao extractUserWorkoutInfo(UserWorkout userWorkout) {
+        return WorkoutDao.builder()
                 .goal(userWorkout.getWorkoutGoal().getName())
-                .experience(userWorkout.getExperience().getName())
+                .experience(userWorkout.getExperience() != null ? userWorkout.getExperience().getName() : null)
                 .workoutList(
                         userWorkout.getWorkoutList().stream()
-                                .map(this::extractWorkoutDetailInfo)
+                                .map(this::extractUserWorkoutDetailInfo)
                                 .collect(Collectors.toList())
                 )
                 .build();
     }
 
-    private UserWorkoutDetailDao extractWorkoutDetailInfo(UserWorkoutDetail userWorkoutDetail) {
-        return UserWorkoutDetailDao.builder()
+    private WorkoutDetailDao extractUserWorkoutDetailInfo(UserWorkoutDetail userWorkoutDetail) {
+        return WorkoutDetailDao.builder()
                 .workoutName(userWorkoutDetail.getFkWorkoutPlan().getWorkoutName())
                 .instructions(userWorkoutDetail.getFkWorkoutPlan().getInstructions())
                 .day(userWorkoutDetail.getFkWorkoutPlan().getDay())

@@ -9,25 +9,11 @@ import Foundation
 
 struct ExerciseData {
     
-    let title: String
-    let image: String
-    let info: String
+    var id: Int?
+    var title: String
+    var image: String
+    var info: String
     var allocatedSeconds: Int
-    let goal: String?
-    
-    init(title: String, image: String, info: String, allocatedSeconds: Int, goal: String) {
-        self.title = title
-        self.image = image
-        self.info = info
-        self.allocatedSeconds = allocatedSeconds
-        self.goal = goal
-    }
-    
-    init(title: String, image: String, info: String, allocatedSeconds: Int) {
-        self.title = title
-        self.image = image
-        self.info = info
-        self.allocatedSeconds = allocatedSeconds
-        self.goal = nil
-    }
+    var resourceURL: String?
+    var goal: String?
 }

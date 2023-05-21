@@ -213,6 +213,7 @@ class HomeViewController: UIViewController {
     
     @objc func goToCustomPlanCreate(_ gesture: UITapGestureRecognizer) {
         let customPlanCreateVC = CustomPlanCreateViewController()
+        customPlanCreateVC.authDetail = self.authDetail
         customPlanCreateVC.headerText = "CUSTOM PLANS"
         self.navigationController?.pushViewController(customPlanCreateVC, animated: true)
     }

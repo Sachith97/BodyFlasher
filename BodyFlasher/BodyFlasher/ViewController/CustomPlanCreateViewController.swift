@@ -14,29 +14,12 @@ class CustomPlanCreateViewController: UIViewController {
         case playing
         case stoped
     }
-
-    private let goalData: [GoalData] = [
-        GoalData(title: "Cardio", image: "cardio-img"),
-        GoalData(title: "Shoulders", image: "shoulders-img"),
-        GoalData(title: "Biceps", image: "biceps-img"),
-        GoalData(title: "Chest", image: "chest-img"),
-        GoalData(title: "Abs", image: "abs-img"),
-        GoalData(title: "Forearms", image: "forearms-img"),
-        GoalData(title: "Triceps", image: "triceps-img"),
-        GoalData(title: "Lower Back", image: "lowerback-img"),
-        GoalData(title: "Quads", image: "quads-img"),
-        GoalData(title: "Calves", image: "calves-img")
-    ]
     
-    private let exerciseData: [ExerciseData] = [
-        ExerciseData(title: "Eliptical Trainer", image: "eliptical-img", info: "Pedal forward while alternating the arm levers back and fourth.", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Stationary Bike", image: "stationary-img", info: "Sit in the seat with your back in full contact with the back rest. Place your feet on the padels. Begin pedalling as you would on a bicycle.", allocatedSeconds: 300, goal: "Cardio"),
-        ExerciseData(title: "Rope Jumping", image: "ropejumping-img", info: "instr 3", allocatedSeconds: 150, goal: "Cardio"),
-        ExerciseData(title: "Walking", image: "walking-img", info: "instr 4", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Running", image: "running-img", info: "instr 5", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Stationary Rowing", image: "rowing-img", info: "instr 6", allocatedSeconds: 300, goal: "Cardio"),
-        ExerciseData(title: "Step Mill", image: "stepmill-img", info: "instr 7", allocatedSeconds: 600, goal: "Cardio")
-    ]
+    var networkManager = NetworkManager.shared
+
+    private var workoutData: [Workout] = []
+    private var goalData: [GoalData] = []
+    private var exerciseData: [ExerciseData] = []
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -235,6 +218,73 @@ class CustomPlanCreateViewController: UIViewController {
         self.view.addSubview(goalListView)
         
         setupConstraints()
+        
+        // fetch data
+        getWorkoutListAndAssign()
+    }
+    
+    func getWorkoutListAndAssign() {
+        networkManager.getWorkoutList(jwt: authDetail.jwt ?? "") { result in
+            switch result {
+            case .success(let response):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    self.workoutData = response
+                    self.setGoalList()
+                }
+                break
+            case .failure(let error):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    // error handle
+                    print("Error occurred: \(error.localizedDescription)")
+                }
+                break
+            }
+        }
+    }
+    
+    func setGoalList() {
+        DispatchQueue.main.async {
+            self.goalData = []
+            for workout in self.workoutData {
+                self.goalData.append(
+                    GoalData(
+                        title: workout.goal,
+                        image: workout.imageName
+                    )
+                )
+            }
+            self.goalListView.reloadData()
+        }
+    }
+    
+    func setWorkoutList() {
+        DispatchQueue.main.async {
+            // filter data to match selected goal
+            let workoutDataListForGoal = self.workoutData.filter { $0.goal == self.selectedGoalData.title }
+            // select first result since only one workout list available for a goal
+            if let workoutListForGoal = workoutDataListForGoal.first {
+                // create exercise list
+                self.exerciseData = []
+                for exercise in workoutListForGoal {
+                    self.exerciseData.append(
+                        ExerciseData(
+                            id: exercise.id,
+                            title: exercise.workoutName,
+                            image: exercise.imageName,
+                            info: exercise.instructions,
+                            allocatedSeconds: exercise.allocatedSeconds,
+                            resourceURL: exercise.resourceURL,
+                            goal: self.selectedGoalData.title
+                        )
+                    )
+                }
+            } else {
+                return
+            }
+            self.exerciseListView.reloadData()
+        }
     }
     
     func proceedGoal(selectedGoal: GoalData) {
@@ -264,6 +314,9 @@ class CustomPlanCreateViewController: UIViewController {
         
         self.view.addSubview(exerciseListView)
         setupExerciseListConstraints()
+        
+        // filter workout list from workout data
+        setWorkoutList()
     }
     
     @objc func goBackToGoalSelection() {
@@ -296,7 +349,7 @@ class CustomPlanCreateViewController: UIViewController {
         exerciseListView.removeFromSuperview()
         
         // exercise video url
-        guard let videoURL = URL(string: "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4") else {
+        guard let videoURL = URL(string: self.selectedExerciseData.resourceURL ?? "") else {
             return
         }
         avPlayer = AVPlayer(url: videoURL)

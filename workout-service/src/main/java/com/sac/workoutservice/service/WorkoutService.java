@@ -18,4 +18,6 @@ public interface WorkoutService {
     CommonResponse saveWorkoutPlanRequest(WorkoutPlanRequestDao workoutPlanRequest);
 
     List<UserWorkoutDao> getUserWorkoutList(String username);
+
+    List<String> getGoalList();
 }

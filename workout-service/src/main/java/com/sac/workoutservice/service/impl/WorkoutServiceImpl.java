@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Sachith Harshamal
@@ -94,6 +95,11 @@ public class WorkoutServiceImpl implements WorkoutService {
         return workoutList.stream()
                 .map(this::extractWorkoutInfo)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getGoalList() {
+        return Stream.of(WorkoutGoal.values()).map(WorkoutGoal::getName).collect(Collectors.toList());
     }
 
     private int calculateAge(int timeStamp) {

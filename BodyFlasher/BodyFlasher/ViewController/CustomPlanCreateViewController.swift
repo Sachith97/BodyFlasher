@@ -29,13 +29,13 @@ class CustomPlanCreateViewController: UIViewController {
     ]
     
     private let exerciseData: [ExerciseData] = [
-        ExerciseData(title: "Eliptical Trainer", image: "eliptical-img", info: "instr 1", allocatedSeconds: 150),
-        ExerciseData(title: "Stationary Bike", image: "stationary-img", info: "instr 2", allocatedSeconds: 150),
-        ExerciseData(title: "Rope Jumping", image: "ropejumping-img", info: "instr 3", allocatedSeconds: 150),
-        ExerciseData(title: "Walking", image: "walking-img", info: "instr 4", allocatedSeconds: 150),
-        ExerciseData(title: "Running", image: "running-img", info: "instr 5", allocatedSeconds: 150),
-        ExerciseData(title: "Stationary Rowing", image: "rowing-img", info: "instr 6", allocatedSeconds: 150),
-        ExerciseData(title: "Step Mill", image: "stepmill-img", info: "instr 7", allocatedSeconds: 150),
+        ExerciseData(title: "Eliptical Trainer", image: "eliptical-img", info: "Pedal forward while alternating the arm levers back and fourth.", allocatedSeconds: 600, goal: "Cardio"),
+        ExerciseData(title: "Stationary Bike", image: "stationary-img", info: "Sit in the seat with your back in full contact with the back rest. Place your feet on the padels. Begin pedalling as you would on a bicycle.", allocatedSeconds: 300, goal: "Cardio"),
+        ExerciseData(title: "Rope Jumping", image: "ropejumping-img", info: "instr 3", allocatedSeconds: 150, goal: "Cardio"),
+        ExerciseData(title: "Walking", image: "walking-img", info: "instr 4", allocatedSeconds: 600, goal: "Cardio"),
+        ExerciseData(title: "Running", image: "running-img", info: "instr 5", allocatedSeconds: 600, goal: "Cardio"),
+        ExerciseData(title: "Stationary Rowing", image: "rowing-img", info: "instr 6", allocatedSeconds: 300, goal: "Cardio"),
+        ExerciseData(title: "Step Mill", image: "stepmill-img", info: "instr 7", allocatedSeconds: 600, goal: "Cardio")
     ]
     
     let backgroundView: UIImageView = {

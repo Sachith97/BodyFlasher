@@ -386,8 +386,12 @@ class CustomPlanCreateViewController: UIViewController {
     }
     
     @objc func addToCustomeList() {
-        goBackToExerciseSelection()
-        goBackToGoalSelection()
+        let alert = UIAlertController(title: nil, message: "Successful", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
+            self.goBackToExerciseSelection()
+            self.goBackToGoalSelection()
+        })
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func goBackToExerciseSelection() {

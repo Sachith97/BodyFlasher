@@ -14,12 +14,16 @@ import java.util.Map;
 @AllArgsConstructor
 public enum WorkoutGoal {
 
-    ABS("ABS"),
-    BACK("BACK"),
-    BICEPS("BICEPS"),
-    CHEST("CHEST"),
-    TRICEPS("TRICEPS"),
-    LEGS("LEGS");
+    CARDIO("Cardio"),
+    SHOULDERS("Shoulders"),
+    BICEPS("Biceps"),
+    CHEST("Chest"),
+    ABS("Abs"),
+    FOREARMS("Forearms"),
+    TRICEPS("Triceps"),
+    LOWER_BACK("Lower Back"),
+    QUADS("Quads"),
+    CALVES("Calves");
 
     private final String name;
 

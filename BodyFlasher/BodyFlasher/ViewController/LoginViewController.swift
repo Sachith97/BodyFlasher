@@ -212,8 +212,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc func signUp() {
-        let planRequestVC = PlanRequestViewController()
-        self.navigationController?.pushViewController(planRequestVC, animated: true)
+        
     }
     
     @objc func forgotPassword() {

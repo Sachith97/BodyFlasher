@@ -34,9 +34,9 @@ public class WorkoutController {
         return workoutService.saveWorkoutPlanRequest(workoutPlanRequest);
     }
 
-    @GetMapping(path = "/user/{username}", produces = {"application/json"}, consumes = {"application/json"})
-    public List<UserWorkoutDao> saveWorkoutPlanRequest(@PathVariable("username") String username) {
-        return workoutService.getUserWorkoutList(username);
+    @GetMapping(path = "/user/workouts", produces = {"application/json"}, consumes = {"application/json"})
+    public List<UserWorkoutDao> getUserWorkoutPlans() {
+        return workoutService.getUserWorkoutList();
     }
 
     @GetMapping(path = "/goals", produces = {"application/json"})

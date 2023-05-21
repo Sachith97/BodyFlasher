@@ -86,8 +86,8 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public List<UserWorkoutDao> getUserWorkoutList(String username) {
-        Optional<User> user = userService.findUserByUsername(username);
+    public List<UserWorkoutDao> getUserWorkoutList() {
+        Optional<User> user = userService.getLoggedInUser();
         if (!user.isPresent()) {
             return null;
         }

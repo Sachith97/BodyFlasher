@@ -36,6 +36,9 @@ public class User implements Serializable {
     @Column(name = "EMAIL", length = 50)
     private String email;
 
+    @Column(name = "PROFESSION")
+    private String profession;
+
     @Column(name = "AGE")
     private Integer age;
 

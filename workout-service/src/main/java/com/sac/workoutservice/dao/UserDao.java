@@ -16,6 +16,7 @@ public class UserDao {
     private String firstName;
     private String lastName;
     private String email;
+    private String profession;
     private Integer age;
     private Integer weight;
     private Integer height;

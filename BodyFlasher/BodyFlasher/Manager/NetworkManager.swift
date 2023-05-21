@@ -125,6 +125,27 @@ class NetworkManager {
             }
         }
     }
+    
+    func getUserWorkoutList(jwt: String, completion: @escaping (Result<[Workout], Error>) -> Void) {
+        
+        let headers = [
+            "Authorization": "Bearer " + jwt,
+            "Content-Type": "application/json"
+        ]
+        
+        getAPIResponse(requestURL: baseURL + "/workouts/user/workouts", httpMethod: "GET", headers: headers, model: [Workout].self) { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    completion(.success(response))
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 
     private func getAPIResponse<T: Decodable>(body: [String: Any]? = nil, requestURL: String, httpMethod: String, headers: [String: String], model: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
         

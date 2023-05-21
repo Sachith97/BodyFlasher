@@ -12,20 +12,11 @@ class MyWorkoutListViewController: UIViewController {
     var authDetail: LoginResponseDetail = LoginResponseDetail()
     var headerText: String = ""
     
-    private let instructExerciseData: [ExerciseData] = [
-        ExerciseData(title: "Eliptical Trainer", image: "eliptical-img", info: "Pedal forward while alternating the arm levers back and fourth.", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Stationary Bike", image: "stationary-img", info: "Sit in the seat with your back in full contact with the back rest. Place your feet on the padels. Begin pedalling as you would on a bicycle.", allocatedSeconds: 300, goal: "Cardio"),
-        ExerciseData(title: "Rope Jumping", image: "ropejumping-img", info: "instr 3", allocatedSeconds: 150, goal: "Cardio"),
-        ExerciseData(title: "Walking", image: "walking-img", info: "instr 4", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Running", image: "running-img", info: "instr 5", allocatedSeconds: 600, goal: "Cardio"),
-        ExerciseData(title: "Stationary Rowing", image: "rowing-img", info: "instr 6", allocatedSeconds: 300, goal: "Cardio"),
-        ExerciseData(title: "Step Mill", image: "stepmill-img", info: "instr 7", allocatedSeconds: 600, goal: "Cardio")
-    ]
+    var networkManager = NetworkManager.shared
     
-    private let customExerciseData: [ExerciseData] = [
-        ExerciseData(title: "Lying Leg Raise", image: "legraise-img", info: "Lie down with your back fully in contact with the floor. Starting position is when your legs are straight and raised vertically to the floor.", allocatedSeconds: 90, goal: "Abs"),
-        ExerciseData(title: "V Ups", image: "vups-img", info: "instr 2", allocatedSeconds: 150, goal: "Abs"),
-    ]
+    private var workoutData: [Workout] = []
+    private var instructExerciseData: [ExerciseData] = []
+    private var customExerciseData: [ExerciseData] = []
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -126,6 +117,9 @@ class MyWorkoutListViewController: UIViewController {
         self.view.addSubview(customTabContainer)
         
         setupConstraints()
+        
+        // fetch data
+        getWorkoutListAndAssign()
     }
     
     @objc func viewInstructContainer() {
@@ -148,6 +142,75 @@ class MyWorkoutListViewController: UIViewController {
         instructToggleButton.backgroundColor = UIColor(named: "semi-dark")
         customToggleButton.setTitleColor(UIColor.white, for: .normal)
         customToggleButton.backgroundColor = UIColor(named: "dark-red")
+    }
+    
+    func getWorkoutListAndAssign() {
+        networkManager.getUserWorkoutList(jwt: authDetail.jwt ?? "") { result in
+            switch result {
+            case .success(let response):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    self.workoutData = response
+                    self.setExerciseList()
+                }
+                break
+            case .failure(let error):
+                // handle response on main thread
+                DispatchQueue.main.async {
+                    // error handle
+                    print("Error occurred: \(error.localizedDescription)")
+                }
+                break
+            }
+        }
+    }
+    
+    func setExerciseList() {
+        DispatchQueue.main.async {
+            // filter data to match instruct category
+            let instructWorkoutList = self.workoutData.filter { $0.workoutCategory == "INSTRUCT" }
+            // clear current list
+            self.instructExerciseData = []
+            // assign workouts
+            for workout in instructWorkoutList {
+                for exercise in workout.workoutList! {
+                    self.instructExerciseData.append(
+                        ExerciseData(
+                            id: exercise.id,
+                            title: exercise.workoutName,
+                            image: exercise.imageName,
+                            info: exercise.instructions,
+                            allocatedSeconds: exercise.allocatedSeconds,
+                            resourceURL: exercise.resourceURL,
+                            goal: workout.goal
+                        )
+                    )
+                }
+            }
+            self.instructExerciseTableView.reloadData()
+            
+            // filter data to match custom category
+            let customWorkoutList = self.workoutData.filter { $0.workoutCategory == "CUSTOM" }
+            // clear current list
+            self.customExerciseData = []
+            // assign workouts
+            for workout in customWorkoutList {
+                for exercise in workout.workoutList! {
+                    self.customExerciseData.append(
+                        ExerciseData(
+                            id: exercise.id,
+                            title: exercise.workoutName,
+                            image: exercise.imageName,
+                            info: exercise.instructions,
+                            allocatedSeconds: exercise.allocatedSeconds,
+                            resourceURL: exercise.resourceURL,
+                            goal: workout.goal
+                        )
+                    )
+                }
+            }
+            self.customExerciseTableView.reloadData()
+        }
     }
     
     func setupConstraints() {

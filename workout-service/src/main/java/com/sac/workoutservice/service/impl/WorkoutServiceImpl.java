@@ -33,7 +33,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private final UserService userService;
 
-    public WorkoutServiceImpl(WorkoutPlanRepository workoutPlanRepository, UserWorkoutRepository userWorkoutRepository, UserService userService) {
+    public WorkoutServiceImpl(WorkoutPlanRepository workoutPlanRepository, UserWorkoutRepository userWorkoutRepository, JwtTokenService jwtTokenService, UserService userService) {
         this.workoutPlanRepository = workoutPlanRepository;
         this.userWorkoutRepository = userWorkoutRepository;
         this.userService = userService;
@@ -46,23 +46,29 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     public CommonResponse saveWorkoutPlanRequest(WorkoutPlanRequestDao workoutPlanRequest) {
-        Optional<User> user = userService.findUserByUsername(workoutPlanRequest.getUsername());
-        if (user.isEmpty()) {
+        Optional<User> user = userService.findUserByUsername(
+                jwtTokenService.extractUsername(workoutPlanRequest.getJwt())
+        );
+        if (!user.isPresent()) {
             return new CommonResponse(Response.NOT_FOUND);
         }
         UserWorkout userWorkout = UserWorkout.builder()
-                .experience(WorkoutExperience.get(workoutPlanRequest.getExperience()))
                 .workoutGoal(WorkoutGoal.get(workoutPlanRequest.getGoal()))
                 .fkUser(user.get())
                 .build();
         userWorkoutRepository.save(userWorkout);
-        return null;
+        // update user info
+        user.get().setAge(calculateAge(workoutPlanRequest.getBirthdayTimestamp()));
+        user.get().setHeight(workoutPlanRequest.getHeight());
+        user.get().setWeight(workoutPlanRequest.getWeight());
+        userService.save(user.get());
+        return new CommonResponse(Response.SUCCESS);
     }
 
     @Override
     public List<UserWorkoutDao> getUserWorkoutList(String username) {
         Optional<User> user = userService.findUserByUsername(username);
-        if (user.isEmpty()) {
+        if (!user.isPresent()) {
             return null;
         }
         List<UserWorkout> workoutList = userWorkoutRepository.findByFkUser(user.get());

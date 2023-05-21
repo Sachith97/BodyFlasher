@@ -54,9 +54,10 @@ public class WorkoutPlan implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof WorkoutPlan other)) {
+        if (object == null) {
             return false;
         }
+        WorkoutPlan other = (WorkoutPlan) object;
         return !((this.getId() == null && other.getId() != null) ||
                 (this.getId() != null && !this.getId().equals(other.getId())));
     }

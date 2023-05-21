@@ -49,9 +49,10 @@ public class UserWorkoutDetail implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof UserWorkoutDetail other)) {
+        if (object == null) {
             return false;
         }
+        UserWorkoutDetail other = (UserWorkoutDetail) object;
         return !((this.getId() == null && other.getId() != null) ||
                 (this.getId() != null && !this.getId().equals(other.getId())));
     }

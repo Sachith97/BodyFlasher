@@ -9,7 +9,7 @@ import Foundation
 
 class NetworkManager {
     
-    let baseURL = "http://13.54.141.32/workout-service/api/v1"
+    let baseURL = "http://108.161.133.103:8080/workout-service/api/v1"
     
     static let shared = NetworkManager()
     

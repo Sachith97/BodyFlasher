@@ -152,14 +152,12 @@ class PlanRequestViewController: UIViewController {
         return label
     }()
     
-    let formStack : UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
+    let formStack : UIView = {
+        let stackView = UIView()
         stackView.isHidden = true
         stackView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         stackView.layer.cornerRadius = 10
         stackView.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 120, right: 20)
-        stackView.isLayoutMarginsRelativeArrangement = true
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -409,9 +407,9 @@ class PlanRequestViewController: UIViewController {
         weightData = weightDataValues.map(String.init)
         
         // initialize stack views
-        formStack.addArrangedSubview(firstQuestionLabel)
-        formStack.addArrangedSubview(maleButton)
-        formStack.addArrangedSubview(femaleButton)
+        formStack.addSubview(firstQuestionLabel)
+        formStack.addSubview(maleButton)
+        formStack.addSubview(femaleButton)
         
         infoContainer.addSubview(infoOneHeaderLabel)
         infoContainer.addSubview(infoOneLabel)
@@ -481,7 +479,7 @@ class PlanRequestViewController: UIViewController {
     }
     
     func processFirstForm() {
-        formStack.arrangedSubviews.forEach {
+        formStack.subviews.forEach {
             $0.removeFromSuperview()
         }
         arrangeSecondForm()
@@ -490,9 +488,9 @@ class PlanRequestViewController: UIViewController {
     @objc func arrangeSecondForm() {
         createBirthdayPicker()
         // initialize stack views
-        formStack.addArrangedSubview(secondQuestionLabel)
-        formStack.addArrangedSubview(birthdayField)
-        formStack.addArrangedSubview(ageSubmitButton)
+        formStack.addSubview(secondQuestionLabel)
+        formStack.addSubview(birthdayField)
+        formStack.addSubview(ageSubmitButton)
         
         setupConstraintsSecondForm()
     }
@@ -530,7 +528,7 @@ class PlanRequestViewController: UIViewController {
             // set struct instance value
             workoutPlanRequest.birthday = agePicker.date
             // clear form and proceed
-            formStack.arrangedSubviews.forEach {
+            formStack.subviews.forEach {
                 $0.removeFromSuperview()
             }
             arrangeThirdForm()
@@ -540,9 +538,9 @@ class PlanRequestViewController: UIViewController {
     @objc func arrangeThirdForm() {
         createHeightPicker()
         // initialize stack views
-        formStack.addArrangedSubview(thirdQuestionLabel)
-        formStack.addArrangedSubview(heightField)
-        formStack.addArrangedSubview(heightSubmitButton)
+        formStack.addSubview(thirdQuestionLabel)
+        formStack.addSubview(heightField)
+        formStack.addSubview(heightSubmitButton)
         
         setupConstraintsThirdForm()
     }
@@ -581,7 +579,7 @@ class PlanRequestViewController: UIViewController {
             // set struct instance value
             workoutPlanRequest.height = Int(heightField.text!)
             // clear form and proceed
-            formStack.arrangedSubviews.forEach {
+            formStack.subviews.forEach {
                 $0.removeFromSuperview()
             }
             arrangeFourthForm()
@@ -591,9 +589,9 @@ class PlanRequestViewController: UIViewController {
     @objc func arrangeFourthForm() {
         createWeightPicker()
         // initialize stack views
-        formStack.addArrangedSubview(fourthQuestionLabel)
-        formStack.addArrangedSubview(weightField)
-        formStack.addArrangedSubview(weightSubmitButton)
+        formStack.addSubview(fourthQuestionLabel)
+        formStack.addSubview(weightField)
+        formStack.addSubview(weightSubmitButton)
         
         setupConstraintsFourthForm()
     }
@@ -632,7 +630,7 @@ class PlanRequestViewController: UIViewController {
             // set struct instance value
             workoutPlanRequest.weight = Int(weightField.text!)
             // clear form and proceed
-            formStack.arrangedSubviews.forEach {
+            formStack.subviews.forEach {
                 $0.removeFromSuperview()
             }
             arrangeFifthForm()
@@ -642,9 +640,9 @@ class PlanRequestViewController: UIViewController {
     @objc func arrangeFifthForm() {
         createGoalPicker()
         // initialize stack views
-        formStack.addArrangedSubview(fifthQuestionLabel)
-        formStack.addArrangedSubview(goalField)
-        formStack.addArrangedSubview(goalSubmitButton)
+        formStack.addSubview(fifthQuestionLabel)
+        formStack.addSubview(goalField)
+        formStack.addSubview(goalSubmitButton)
         
         setupConstraintsFifthForm()
     }
@@ -683,7 +681,7 @@ class PlanRequestViewController: UIViewController {
             // set struct instance value
             workoutPlanRequest.goal = goalField.text!
             // clear form and proceed
-            formStack.arrangedSubviews.forEach {
+            formStack.subviews.forEach {
                 $0.removeFromSuperview()
             }
             arrangeSixthForm()
@@ -692,8 +690,8 @@ class PlanRequestViewController: UIViewController {
     
     @objc func arrangeSixthForm() {
         // initialize stack views
-        formStack.addArrangedSubview(generatePlanInfoLabel)
-        formStack.addArrangedSubview(generatePlanButton)
+        formStack.addSubview(generatePlanInfoLabel)
+        formStack.addSubview(generatePlanButton)
         
         setupConstraintsSixthForm()
     }
@@ -735,16 +733,24 @@ class PlanRequestViewController: UIViewController {
             userDetailHeader.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             userDetailHeader.heightAnchor.constraint(equalToConstant: 40),
             
-            maleButton.heightAnchor.constraint(equalToConstant: 40),
-            maleButton.topAnchor.constraint(equalTo: firstQuestionLabel.bottomAnchor, constant: 40),
-            maleButton.bottomAnchor.constraint(equalTo: femaleButton.topAnchor, constant: -20),
-            
-            femaleButton.heightAnchor.constraint(equalToConstant: 40),
-            
             formStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             formStack.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -50),
             formStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             formStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            firstQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            firstQuestionLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            firstQuestionLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
+            
+            maleButton.bottomAnchor.constraint(equalTo: femaleButton.topAnchor, constant: -20),
+            maleButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            maleButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
+            maleButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            femaleButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            femaleButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            femaleButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
+            femaleButton.heightAnchor.constraint(equalToConstant: 40),
             
             startButton.heightAnchor.constraint(equalToConstant: 40),
             startButton.bottomAnchor.constraint(equalTo: homeButton.topAnchor, constant: -10),
@@ -789,60 +795,85 @@ class PlanRequestViewController: UIViewController {
     
     func setupConstraintsSecondForm() {
         NSLayoutConstraint.activate([
-            secondQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            secondQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            secondQuestionLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            secondQuestionLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             
-            birthdayField.bottomAnchor.constraint(equalTo: ageSubmitButton.topAnchor, constant: -50),
-            birthdayField.widthAnchor.constraint(equalToConstant: 300),
+            birthdayField.bottomAnchor.constraint(equalTo: ageSubmitButton.topAnchor, constant: -60),
+            birthdayField.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            birthdayField.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             birthdayField.heightAnchor.constraint(equalToConstant: 40),
-            birthdayField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            ageSubmitButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            ageSubmitButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            ageSubmitButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             ageSubmitButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
     func setupConstraintsThirdForm() {
         NSLayoutConstraint.activate([
-            thirdQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            thirdQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            thirdQuestionLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            thirdQuestionLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             
-            heightField.bottomAnchor.constraint(equalTo: heightSubmitButton.topAnchor, constant: -50),
-            heightField.widthAnchor.constraint(equalToConstant: 300),
+            heightField.bottomAnchor.constraint(equalTo: heightSubmitButton.topAnchor, constant: -60),
+            heightField.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            heightField.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             heightField.heightAnchor.constraint(equalToConstant: 40),
-            heightField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            heightSubmitButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            heightSubmitButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            heightSubmitButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             heightSubmitButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
     func setupConstraintsFourthForm() {
         NSLayoutConstraint.activate([
-            fourthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            fourthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            fourthQuestionLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            fourthQuestionLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             
-            weightField.bottomAnchor.constraint(equalTo: weightSubmitButton.topAnchor, constant: -50),
-            weightField.widthAnchor.constraint(equalToConstant: 300),
+            weightField.bottomAnchor.constraint(equalTo: weightSubmitButton.topAnchor, constant: -60),
+            weightField.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            weightField.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             weightField.heightAnchor.constraint(equalToConstant: 40),
-            weightField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            weightSubmitButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            weightSubmitButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            weightSubmitButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             weightSubmitButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
     func setupConstraintsFifthForm() {
         NSLayoutConstraint.activate([
-            fifthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            fifthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            fifthQuestionLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            fifthQuestionLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             
-            goalField.bottomAnchor.constraint(equalTo: goalSubmitButton.topAnchor, constant: -50),
-            goalField.widthAnchor.constraint(equalToConstant: 300),
+            goalField.bottomAnchor.constraint(equalTo: goalSubmitButton.topAnchor, constant: -60),
+            goalField.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            goalField.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             goalField.heightAnchor.constraint(equalToConstant: 40),
-            goalField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            goalSubmitButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            goalSubmitButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            goalSubmitButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             goalSubmitButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
     func setupConstraintsSixthForm() {
         NSLayoutConstraint.activate([
-            generatePlanInfoLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            generatePlanInfoLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 100),
+            generatePlanInfoLabel.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            generatePlanInfoLabel.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             
+            generatePlanButton.bottomAnchor.constraint(equalTo: formStack.bottomAnchor, constant: -100),
+            generatePlanButton.leadingAnchor.constraint(equalTo: formStack.leadingAnchor, constant: 20),
+            generatePlanButton.trailingAnchor.constraint(equalTo: formStack.trailingAnchor, constant: -20),
             generatePlanButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }

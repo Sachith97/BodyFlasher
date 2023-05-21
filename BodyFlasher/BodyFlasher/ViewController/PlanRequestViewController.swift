@@ -704,19 +704,22 @@ class PlanRequestViewController: UIViewController {
     }
     
     func sendWorkoutPlanRequest() {
-        let waitingIndicator = self.waitingIndicator()
-//        let status = networkManager.sendWorkoutPlanRequest(planRequest: self.workoutPlanRequest)
-//        if (status) {
-//            self.killWaitingIndicator(waitingIndicator: waitingIndicator)
-//            // initialize home view
-//            let homeVC = HomeViewController()
-//            self.navigationController?.pushViewController(homeVC, animated: true)
-//        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.killWaitingIndicator(waitingIndicator: waitingIndicator)
-            // initialize home view
-            let homeVC = HomeViewController()
-            self.navigationController?.pushViewController(homeVC, animated: true)
+        networkManager.sendWorkoutPlanRequest(planRequest: self.workoutPlanRequest, jwt: authDetail.jwt ?? "") { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if (response.ok ?? false) {
+                        let homeVC = HomeViewController()
+                        homeVC.authDetail = self.authDetail
+                        self.navigationController?.pushViewController(homeVC, animated: true)
+                    }
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    print("Error occurred: \(error.localizedDescription)")
+                    self.createAlert(title: "Error", message: "Error occurred")
+                }
+            }
         }
     }
     

@@ -9,14 +9,14 @@ import Foundation
 
 struct Response: Decodable {
     
-    var isOk: Bool?
+    var ok: Bool?
     var responseCode: Int?
     var responseMessage: String?
     
     init () { }
     
-    init (isOk: Bool, responseCode: Int, responseMessage: String) {
-        self.isOk = isOk
+    init (ok: Bool, responseCode: Int, responseMessage: String) {
+        self.ok = ok
         self.responseCode = responseCode
         self.responseMessage = responseMessage
     }

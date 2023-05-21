@@ -61,7 +61,11 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         // find previous workouts for selected goal and remove
         WorkoutGoal workoutGoal = WorkoutGoal.get(workoutPlanRequest.getGoal());
-        List<UserWorkout> workoutList = userWorkoutRepository.findByFkUserAndWorkoutGoal(user.get(), workoutGoal);
+        List<UserWorkout> workoutList = userWorkoutRepository.findByFkUserAndWorkoutGoalAndWorkoutCategory(user.get(), workoutGoal, WorkoutCategory.INSTRUCT);
+        workoutList.forEach(workout -> {
+            List<UserWorkoutDetail> workoutDetailList = userWorkoutDetailRepository.findByFkUserWorkout(workout);
+            userWorkoutDetailRepository.deleteAll(workoutDetailList);
+        });
         userWorkoutRepository.deleteAll(workoutList);
         // proceed with new request
         UserWorkout userWorkout = UserWorkout.builder()
@@ -80,9 +84,8 @@ public class WorkoutServiceImpl implements WorkoutService {
         userService.save(user.get());
         // find matching workouts
         List<WorkoutPlan> workoutPlanList =
-                workoutPlanRepository.findByWorkoutGoalAndPreferBMIFromGreaterThanEqualAndPreferBMIToLessThanEqual(
+                workoutPlanRepository.findByWorkoutGoalAndBMI(
                         workoutGoal,
-                        user.get().getBmiValue(),
                         user.get().getBmiValue()
                 );
         workoutPlanList.forEach(plan -> this.saveWorkoutPlan(plan, userWorkout));

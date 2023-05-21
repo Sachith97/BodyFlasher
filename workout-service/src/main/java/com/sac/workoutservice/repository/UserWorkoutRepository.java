@@ -1,5 +1,6 @@
 package com.sac.workoutservice.repository;
 
+import com.sac.workoutservice.enums.WorkoutCategory;
 import com.sac.workoutservice.enums.WorkoutGoal;
 import com.sac.workoutservice.model.User;
 import com.sac.workoutservice.model.UserWorkout;
@@ -17,5 +18,5 @@ public interface UserWorkoutRepository extends JpaRepository<UserWorkout, Long> 
 
     List<UserWorkout> findByFkUser(User user);
 
-    List<UserWorkout> findByFkUserAndWorkoutGoal(User user, WorkoutGoal workoutGoal);
+    List<UserWorkout> findByFkUserAndWorkoutGoalAndWorkoutCategory(User user, WorkoutGoal workoutGoal, WorkoutCategory workoutCategory);
 }

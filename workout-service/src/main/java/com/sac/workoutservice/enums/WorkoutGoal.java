@@ -14,18 +14,19 @@ import java.util.Map;
 @AllArgsConstructor
 public enum WorkoutGoal {
 
-    CARDIO("Cardio"),
-    SHOULDERS("Shoulders"),
-    BICEPS("Biceps"),
-    CHEST("Chest"),
-    ABS("Abs"),
-    FOREARMS("Forearms"),
-    TRICEPS("Triceps"),
-    LOWER_BACK("Lower Back"),
-    QUADS("Quads"),
-    CALVES("Calves");
+    CARDIO("Cardio", "cardio-img"),
+    SHOULDERS("Shoulders", "shoulders-img"),
+    BICEPS("Biceps", "biceps-img"),
+    CHEST("Chest", "chest-img"),
+    ABS("Abs", "abs-img"),
+    FOREARMS("Forearms", "forearms-img"),
+    TRICEPS("Triceps", "triceps-img"),
+    LOWER_BACK("Lower Back", "lowerback-img"),
+    QUADS("Quads", "quads-img"),
+    CALVES("Calves", "calves-img");
 
     private final String name;
+    private final String imageName;
 
     private static final Map<String, WorkoutGoal> lookup = new HashMap<>();
 

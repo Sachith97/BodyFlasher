@@ -16,6 +16,7 @@ import java.util.List;
 public class WorkoutDao {
 
     private String goal;
+    private String imageName;
     private String experience;
     private List<WorkoutDetailDao> workoutList;
 }

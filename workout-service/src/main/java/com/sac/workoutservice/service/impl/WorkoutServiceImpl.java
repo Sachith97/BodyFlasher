@@ -109,6 +109,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         planListMap.forEach((goal, planList) -> workoutDaoList.add(
                 WorkoutDao.builder()
                         .goal(goal.getName())
+                        .imageName(goal.getImageName())
                         .experience(null)
                         .workoutList(
                                 planList.stream()

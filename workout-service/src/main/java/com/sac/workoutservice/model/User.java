@@ -48,6 +48,9 @@ public class User implements Serializable {
     @Column(name = "HEIGHT")
     private Integer height;
 
+    @Column(name = "BMI_VALUE")
+    private Double bmiValue;
+
     @Column(name = "USERNAME", unique = true, length = 20)
     private String username;
 

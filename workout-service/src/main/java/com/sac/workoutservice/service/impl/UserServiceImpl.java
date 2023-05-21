@@ -41,4 +41,10 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
     }
+
+    @Override
+    public CommonResponse save(User user) {
+        userRepository.save(user);
+        return new CommonResponse(Response.SUCCESS);
+    }
 }

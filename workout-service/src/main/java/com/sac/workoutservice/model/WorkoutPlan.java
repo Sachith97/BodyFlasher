@@ -46,6 +46,12 @@ public class WorkoutPlan implements Serializable {
     @Column(name = "DAY", length = 5)
     private Integer day;
 
+    @Column(name = "PREFER_BMI_FROM")
+    private Double preferBMIFrom;
+
+    @Column(name = "PREFER_BMI_TO")
+    private Double preferBMITo;
+
     @Column(name = "ALLOCATED_SECONDS")
     private Integer allocatedSeconds;
 

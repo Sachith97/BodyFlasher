@@ -15,4 +15,6 @@ public interface UserService {
     Optional<User> findUserByUsername(String username);
 
     CommonResponse login(LoginRequestDao loginRequest);
+
+    CommonResponse save(User user);
 }

@@ -31,7 +31,7 @@ public class UserWorkout implements Serializable {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "EXPERIENCE", nullable = false)
+    @Column(name = "EXPERIENCE")
     private WorkoutExperience experience;
 
     @Enumerated(EnumType.STRING)

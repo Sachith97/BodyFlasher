@@ -1,5 +1,6 @@
 package com.sac.workoutservice.repository;
 
+import com.sac.workoutservice.enums.WorkoutGoal;
 import com.sac.workoutservice.model.User;
 import com.sac.workoutservice.model.UserWorkout;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ import java.util.List;
 public interface UserWorkoutRepository extends JpaRepository<UserWorkout, Long> {
 
     List<UserWorkout> findByFkUser(User user);
+
+    List<UserWorkout> findByFkUserAndWorkoutGoal(User user, WorkoutGoal workoutGoal);
 }

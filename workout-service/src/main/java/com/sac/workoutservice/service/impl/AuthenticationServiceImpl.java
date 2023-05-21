@@ -71,6 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .profession(user.getProfession())
                 .age(user.getAge())
                 .weight(user.getWeight())
                 .height(user.getHeight())

@@ -13,10 +13,17 @@ class MyWorkoutListViewController: UIViewController {
     var headerText: String = ""
     
     var networkManager = NetworkManager.shared
+    var spinnerHandler = SpinnerHandler()
     
     private var workoutData: [Workout] = []
     private var instructExerciseData: [ExerciseData] = []
     private var customExerciseData: [ExerciseData] = []
+    
+    private let spinner: Spinner = {
+        let spinner = Spinner()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -112,6 +119,7 @@ class MyWorkoutListViewController: UIViewController {
         instructTabContainer.addSubview(instructExerciseTableView)
         customTabContainer.addSubview(customExerciseTableView)
         
+        self.view.addSubview(spinner)
         self.view.addSubview(toggleButtonContainer)
         self.view.addSubview(instructTabContainer)
         self.view.addSubview(customTabContainer)
@@ -145,6 +153,7 @@ class MyWorkoutListViewController: UIViewController {
     }
     
     func getWorkoutListAndAssign() {
+        spinnerHandler.handle(source: self.view, spinner: self.spinner, status: true)
         networkManager.getUserWorkoutList(jwt: authDetail.jwt ?? "") { result in
             switch result {
             case .success(let response):
@@ -157,6 +166,7 @@ class MyWorkoutListViewController: UIViewController {
             case .failure(let error):
                 // handle response on main thread
                 DispatchQueue.main.async {
+                    self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                     // error handle
                     print("Error occurred: \(error.localizedDescription)")
                 }
@@ -210,11 +220,18 @@ class MyWorkoutListViewController: UIViewController {
                 }
             }
             self.customExerciseTableView.reloadData()
+            // stop spinner
+            self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
         }
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: view.topAnchor),
+            spinner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            spinner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            spinner.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

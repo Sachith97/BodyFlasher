@@ -10,6 +10,13 @@ import UIKit
 class LoginViewController: UIViewController {
     
     var networkManager = NetworkManager.shared
+    var spinnerHandler = SpinnerHandler()
+    
+    private let spinner: Spinner = {
+        let spinner = Spinner()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -120,6 +127,7 @@ class LoginViewController: UIViewController {
         forgotPasswordLabel.isUserInteractionEnabled = true
         forgotPasswordLabel.addGestureRecognizer(forgotPasswordTapGesture)
         
+        self.view.addSubview(spinner)
         self.view.addSubview(headerLabel)
         self.view.addSubview(usernameField)
         self.view.addSubview(passwordField)
@@ -137,34 +145,14 @@ class LoginViewController: UIViewController {
         } else if (passwordField.text!.isEmpty) {
             createAlert(title: nil, message: "Please enter password")
         } else {
-//            // initialize waiting indicator
-//            let waitingIndicator = self.waitingIndicator()
+            spinnerHandler.handle(source: self.view, spinner: self.spinner, status: true)
             // get API response
             networkManager.login(username: usernameField.text!, password: passwordField.text!) { result in
                 switch result {
                 case .success(let response):
                     // handle response on main thread
                     DispatchQueue.main.async {
-//                        // kill waiting indicator on response
-//                        self.killWaitingIndicator(waitingIndicator: waitingIndicator) { result in
-//                            switch result {
-//                            case.success(true):
-//                                // response validation
-//                                if (response.ok!) {
-//                                    // proceed
-//                                    let planRequestVC = PlanRequestViewController()
-//                                    self.navigationController?.pushViewController(planRequestVC, animated: true)
-//                                } else {
-//                                    self.createAlert(title: "Error", message: response.responseMessage!)
-//                                }
-//                                break
-//                            case .success(false):
-//                                break
-//                            case .failure(_):
-//                                break
-//                            }
-//                        }
-                        
+                        self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                         // response validation
                         if (response.ok!) {
                             // proceed
@@ -179,21 +167,7 @@ class LoginViewController: UIViewController {
                 case .failure(let error):
                     // handle response on main thread
                     DispatchQueue.main.async {
-//                        // kill waiting indicator on response
-//                        self.killWaitingIndicator(waitingIndicator: waitingIndicator) { result in
-//                            switch result {
-//                            case.success(true):
-//                                // error handle
-//                                print("Error occurred: \(error.localizedDescription)")
-//                                self.createAlert(title: "Error", message: "Error occurred")
-//                                break
-//                            case .success(false):
-//                                break
-//                            case .failure(_):
-//                                break
-//                            }
-//                        }
-                        
+                        self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                         // error handle
                         print("Error occurred: \(error.localizedDescription)")
                         self.createAlert(title: "Error", message: "Error occurred")
@@ -221,6 +195,11 @@ class LoginViewController: UIViewController {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: view.topAnchor),
+            spinner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            spinner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            spinner.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -271,26 +250,5 @@ extension LoginViewController: UITextFieldDelegate {
         let lengthValidation = newString.length <= maxLength
         // validate character case if length validation is ok
         return lengthValidation == false ? false : (string.rangeOfCharacter(from: .uppercaseLetters) == nil)
-    }
-}
-
-extension LoginViewController {
-    
-    func waitingIndicator() -> UIAlertController {
-        let alert = UIAlertController(title: nil, message: "Please wait", preferredStyle: .alert)
-        let indicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-        indicator.hidesWhenStopped = true
-        indicator.startAnimating()
-        indicator.style = .large
-        alert.view.addSubview(indicator)
-        present(alert, animated: true, completion: nil)
-        return alert
-    }
-    
-    func killWaitingIndicator(waitingIndicator: UIAlertController, completion: @escaping (Result<Bool, Error>) -> Void) {
-        DispatchQueue.main.async {
-            waitingIndicator.dismiss(animated: true, completion: nil)
-            completion(.success(true))
-        }
     }
 }

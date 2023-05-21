@@ -29,6 +29,13 @@ class PlanRequestViewController: UIViewController {
     
     var workoutPlanRequest = WorkoutPlanRequest()
     var networkManager = NetworkManager()
+    var spinnerHandler = SpinnerHandler()
+    
+    private let spinner: Spinner = {
+        let spinner = Spinner()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
     
     // initial elements
     let backgroundView: UIView = {
@@ -419,6 +426,7 @@ class PlanRequestViewController: UIViewController {
         infoContainer.addSubview(infoThreeLabel)
         
         // add components
+        view.addSubview(spinner)
         view.addSubview(backgroundView)
         view.addSubview(userDetailHeader)
         view.addSubview(formStack)
@@ -702,10 +710,12 @@ class PlanRequestViewController: UIViewController {
     }
     
     func sendWorkoutPlanRequest() {
+        spinnerHandler.handle(source: self.view, spinner: self.spinner, status: true)
         networkManager.sendWorkoutPlanRequest(planRequest: self.workoutPlanRequest, jwt: authDetail.jwt ?? "") { result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
+                    self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                     if (response.ok ?? false) {
                         let homeVC = HomeViewController()
                         homeVC.authDetail = self.authDetail
@@ -714,6 +724,7 @@ class PlanRequestViewController: UIViewController {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
+                    self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                     print("Error occurred: \(error.localizedDescription)")
                     self.createAlert(title: "Error", message: "Error occurred")
                 }
@@ -723,6 +734,11 @@ class PlanRequestViewController: UIViewController {
     
     func setupConstraintsFirstForm() {
         NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: view.topAnchor),
+            spinner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            spinner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            spinner.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

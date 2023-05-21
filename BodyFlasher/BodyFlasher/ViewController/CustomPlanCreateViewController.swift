@@ -16,10 +16,17 @@ class CustomPlanCreateViewController: UIViewController {
     }
     
     var networkManager = NetworkManager.shared
+    var spinnerHandler = SpinnerHandler()
 
     private var workoutData: [Workout] = []
     private var goalData: [GoalData] = []
     private var exerciseData: [ExerciseData] = []
+    
+    private let spinner: Spinner = {
+        let spinner = Spinner()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -212,8 +219,7 @@ class CustomPlanCreateViewController: UIViewController {
         goalListView.register(GridViewCell.self, forCellWithReuseIdentifier: "GridCell")
         goalListView.translatesAutoresizingMaskIntoConstraints = false
         
-//        customPlanCreateRequestContainer.addSubview(goalListView)
-        
+        self.view.addSubview(spinner)
         self.view.addSubview(requestTitleLabel)
         self.view.addSubview(goalListView)
         
@@ -224,6 +230,7 @@ class CustomPlanCreateViewController: UIViewController {
     }
     
     func getWorkoutListAndAssign() {
+        spinnerHandler.handle(source: self.view, spinner: self.spinner, status: true)
         networkManager.getWorkoutList(jwt: authDetail.jwt ?? "") { result in
             switch result {
             case .success(let response):
@@ -234,6 +241,7 @@ class CustomPlanCreateViewController: UIViewController {
                 }
                 break
             case .failure(let error):
+                self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                 // handle response on main thread
                 DispatchQueue.main.async {
                     // error handle
@@ -256,6 +264,8 @@ class CustomPlanCreateViewController: UIViewController {
                 )
             }
             self.goalListView.reloadData()
+            // stop spinner
+            self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
         }
     }
     
@@ -438,9 +448,11 @@ class CustomPlanCreateViewController: UIViewController {
     }
     
     @objc func addToCustomeList() {
+        spinnerHandler.handle(source: self.view, spinner: self.spinner, status: true)
         networkManager.saveCustomWorkout(jwt: authDetail.jwt ?? "", exerciseData: selectedExerciseData) { result in
             switch result {
             case .success(let response):
+                self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                 // handle response on main thread
                 DispatchQueue.main.async {
                     if(response.ok ?? false) {
@@ -458,6 +470,7 @@ class CustomPlanCreateViewController: UIViewController {
             case .failure(let error):
                 // handle response on main thread
                 DispatchQueue.main.async {
+                    self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                     // error handle
                     print("Error occurred: \(error.localizedDescription)")
                 }
@@ -492,6 +505,11 @@ class CustomPlanCreateViewController: UIViewController {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: view.topAnchor),
+            spinner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            spinner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            spinner.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

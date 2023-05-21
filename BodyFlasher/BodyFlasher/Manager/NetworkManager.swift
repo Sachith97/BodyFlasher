@@ -6,6 +6,12 @@
 //
 
 import Foundation
+import Combine
+
+enum NetworkError: Error {
+    case APIError
+    case DecodingError
+}
 
 class NetworkManager {
     
@@ -16,128 +22,120 @@ class NetworkManager {
     init() {}
     
     func login(username: String, password: String, completion: @escaping (Result<LoginResponse, Error>) -> Void) {
-        // API endpoint URL
-        guard let url = URL(string: baseURL + "/auth/login") else {
-            DispatchQueue.main.async {
-                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            }
-            return
-        }
-
-        // Prepare the request object
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        // Set the request body
-        let parameters: [String: Any] = [
+        
+        let headers = [
+            "Content-Type": "application/json"
+        ]
+        
+        let requestBody: [String: Any] = [
             "username": username,
             "password": password
         ]
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-        } catch {
-            DispatchQueue.main.async {
-                completion(.failure(error))
-            }
-            return
-        }
-
-        // Set the request headers
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Create a URLSession and make the request
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { (data, response, error) in
-            if let error = error {
+        
+        getAPIResponse(body: requestBody, requestURL: baseURL + "/auth/login", httpMethod: "POST", headers: headers, model: LoginResponse.self) { (result: Result<LoginResponse, Error>) in
+            switch result {
+            case .success(let response):
+                // Handle the API response
+                DispatchQueue.main.async {
+                    completion(.success(response))
+                }
+            case .failure(let error):
+                // Handle the API error
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
-                return
-            }
-
-            if let data = data {
-                do {
-                    // Parse the response data into a response entity
-                    let decoder = JSONDecoder()
-                    let responseEntity = try decoder.decode(LoginResponse.self, from: data)
-                    DispatchQueue.main.async {
-                        completion(.success(responseEntity))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
-                    }
-                }
             }
         }
-
-        // Start the request
-        task.resume()
     }
     
     func sendWorkoutPlanRequest(planRequest: WorkoutPlanRequest, jwt: String, completion: @escaping (Result<Response, Error>) -> Void) {
-        // API endpoint URL
-        guard let url = URL(string: baseURL + "/workouts/request") else {
-            DispatchQueue.main.async {
-                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            }
-            return
-        }
+        
+        let headers = [
+            "Authorization": "Bearer " + jwt,
+            "Content-Type": "application/json"
+        ]
 
-        // Prepare the request object
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        // Set the request body
-        let parameters: [String: Any] = [
+        let requestBody: [String: Any] = [
             "birthdayTimestamp": planRequest.birthday?.timeIntervalSince1970,
             "gender": planRequest.gender,
             "height": planRequest.height,
             "weight": planRequest.weight,
             "goal": planRequest.goal
         ]
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-        } catch {
-            DispatchQueue.main.async {
-                completion(.failure(error))
-            }
-            return
-        }
-
-        // Set the request headers
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer " + jwt, forHTTPHeaderField: "Authorization")
-
-        // Create a URLSession and make the request
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { (data, response, error) in
-            if let error = error {
+        
+        getAPIResponse(body: requestBody, requestURL: baseURL + "/workouts/request", httpMethod: "POST", headers: headers, model: Response.self) { (result: Result<Response, Error>) in
+            switch result {
+            case .success(let response):
+                // Handle the API response
+                DispatchQueue.main.async {
+                    completion(.success(response))
+                }
+            case .failure(let error):
+                // Handle the API error
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
-                return
-            }
-
-            if let data = data {
-                do {
-                    // Parse the response data into a response entity
-                    let decoder = JSONDecoder()
-                    let responseEntity = try decoder.decode(Response.self, from: data)
-                    DispatchQueue.main.async {
-                        completion(.success(responseEntity))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
-                    }
-                }
             }
         }
-
-        // Start the request
+    }
+    
+    private func getAPIResponse<T: Decodable>(body: [String: Any]?, requestURL: String, httpMethod: String, headers: [String: String], model: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
+        
+        // initialize request with url
+        guard let url = URL(string: requestURL) else {
+            let error = NSError(domain: "Invalid URL", code: 0, userInfo: nil)
+            completion(.failure(error))
+            return
+        }
+        var request = URLRequest(url: url)
+        
+        // apply http method
+        request.httpMethod = httpMethod
+        
+        // apply headers
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        // apply request body
+        if let requestBody = body, !(body?.isEmpty ?? false) {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: requestBody)
+                request.httpBody = jsonData
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        }
+        
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                let error = NSError(domain: "Bad server response", code: 0, userInfo: nil)
+                completion(.failure(error))
+                return
+            }
+            
+            // Process the data and decode it into the desired type T
+            // Assuming you are using JSON data and Codable for decoding
+            if let data = data {
+                do {
+                    let decodedData = try JSONDecoder().decode(T.self, from: data)
+                    completion(.success(decodedData))
+                } catch {
+                    completion(.failure(error))
+                }
+            } else {
+                let error = NSError(domain: "No data received", code: 0, userInfo: nil)
+                completion(.failure(error))
+            }
+        }
+        
         task.resume()
     }
 }

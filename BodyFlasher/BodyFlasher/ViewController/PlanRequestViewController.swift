@@ -31,15 +31,125 @@ class PlanRequestViewController: UIViewController {
     var networkManager = NetworkManager()
     
     // initial elements
+    let backgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let userDetailHeader : UserDetailHeader = {
+        let userDetailHeader = UserDetailHeader()
+        userDetailHeader.backgroundColor = UIColor.clear
+        userDetailHeader.translatesAutoresizingMaskIntoConstraints = false
+        return userDetailHeader
+    }()
+    
     let startButton : UIButton = {
         let button = UIButton()
         button.setTitle("GET MY PLAN", for: .normal)
-        button.titleLabel?.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 17.0)
-        button.backgroundColor = UIColor(named: "dark-red")
+        button.titleLabel?.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 14.0)
+        button.backgroundColor = UIColor.gray.withAlphaComponent(0.7)
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(enableSurvey), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
+    }()
+    
+    let homeButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("HOME", for: .normal)
+        button.titleLabel?.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 14.0)
+        button.backgroundColor = UIColor(named: "dark-red")
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(goToHome), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    let infoContainer: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let infoOneHeaderLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(named: "semi-yellow")
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 22.0)
+        label.text = "New & Improved Trainer"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let infoOneLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Regular", size: 16.0)
+        label.text = "A brand new look, upgraded workout plans, and a more advanced training method for even better results"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let infoTwoHeaderLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(named: "semi-yellow")
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 22.0)
+        label.text = "Smarter Workout Experience"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let infoTwoLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Regular", size: 16.0)
+        label.text = "Now your training just got smarter, with a more sophisticated training models weight and rep suggessions, that's based on your request"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let infoThreeHeaderLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(named: "semi-yellow")
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 22.0)
+        label.text = "Better Exercise Information"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let infoThreeLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .left
+        label.font = UIFont(name:"AppleSDGothicNeo-Regular", size: 16.0)
+        label.text = "All new videos with advanced training tips on proper form and a lifting history graph to tracj your exerice time and performance"
+        label.backgroundColor = UIColor.clear
+        label.contentMode = .scaleToFill
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     let formStack : UIStackView = {
@@ -282,13 +392,17 @@ class PlanRequestViewController: UIViewController {
         view.backgroundColor = .clear
         view.layer.insertSublayer(avPlayerLayer, at: 0)
         
-        // hide default back icon
-        self.navigationItem.setHidesBackButton(true, animated: true)
+        // hide default nav bar
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
 
         NotificationCenter.default.addObserver(self,
                                            selector: #selector(playerItemDidReachEnd(notification:)),
                                            name: .AVPlayerItemDidPlayToEndTime,
                                            object: avPlayer.currentItem)
+        
+        // set user's details
+        self.userDetailHeader.usernameLabel.text = (self.authDetail.user?.firstName ?? "Anonymous") + " " + (self.authDetail.user?.lastName ?? "User")
+        self.userDetailHeader.professionLabel.text = (self.authDetail.user?.profession ?? "Profession")
         
         // initiate data sources
         heightData = heightDataValues.map(String.init)
@@ -299,9 +413,20 @@ class PlanRequestViewController: UIViewController {
         formStack.addArrangedSubview(maleButton)
         formStack.addArrangedSubview(femaleButton)
         
+        infoContainer.addSubview(infoOneHeaderLabel)
+        infoContainer.addSubview(infoOneLabel)
+        infoContainer.addSubview(infoTwoHeaderLabel)
+        infoContainer.addSubview(infoTwoLabel)
+        infoContainer.addSubview(infoThreeHeaderLabel)
+        infoContainer.addSubview(infoThreeLabel)
+        
         // add components
+        view.addSubview(backgroundView)
+        view.addSubview(userDetailHeader)
         view.addSubview(formStack)
         view.addSubview(startButton)
+        view.addSubview(homeButton)
+        view.addSubview(infoContainer)
         setupConstraintsFirstForm()
     }
 
@@ -325,6 +450,22 @@ class PlanRequestViewController: UIViewController {
     @objc func enableSurvey() {
         formStack.isHidden = false
         startButton.isHidden = true
+        homeButton.isHidden = true
+        userDetailHeader.isHidden = true
+        infoContainer.isHidden = true
+        backgroundView.isHidden = true
+    }
+    
+    @objc func goToHome() {
+        let homeVC = HomeViewController()
+        homeVC.authDetail = self.authDetail
+        self.navigationController?.pushViewController(homeVC, animated: true)
+    }
+    
+    func createAlert(title: String?, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func setGenderMale() {
@@ -383,13 +524,17 @@ class PlanRequestViewController: UIViewController {
     }
     
     @objc func processSecondForm() {
-        // set struct instance value
-        workoutPlanRequest.birthday = agePicker.date
-        // clear form and proceed
-        formStack.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
+        if (!birthdayField.hasText) {
+            createAlert(title: nil, message: "Please select your birthday")
+        } else {
+            // set struct instance value
+            workoutPlanRequest.birthday = agePicker.date
+            // clear form and proceed
+            formStack.arrangedSubviews.forEach {
+                $0.removeFromSuperview()
+            }
+            arrangeThirdForm()
         }
-        arrangeThirdForm()
     }
     
     @objc func arrangeThirdForm() {
@@ -430,13 +575,17 @@ class PlanRequestViewController: UIViewController {
     }
     
     @objc func processThirdForm() {
-        // set struct instance value
-        workoutPlanRequest.height = Int(heightField.text!)
-        // clear form and proceed
-        formStack.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
+        if (!heightField.hasText) {
+            createAlert(title: nil, message: "Please select your height")
+        } else {
+            // set struct instance value
+            workoutPlanRequest.height = Int(heightField.text!)
+            // clear form and proceed
+            formStack.arrangedSubviews.forEach {
+                $0.removeFromSuperview()
+            }
+            arrangeFourthForm()
         }
-        arrangeFourthForm()
     }
     
     @objc func arrangeFourthForm() {
@@ -477,13 +626,17 @@ class PlanRequestViewController: UIViewController {
     }
     
     @objc func processFourthForm() {
-        // set struct instance value
-        workoutPlanRequest.weight = Int(weightField.text!)
-        // clear form and proceed
-        formStack.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
+        if (!weightField.hasText) {
+            createAlert(title: nil, message: "Please select your weight")
+        } else {
+            // set struct instance value
+            workoutPlanRequest.weight = Int(weightField.text!)
+            // clear form and proceed
+            formStack.arrangedSubviews.forEach {
+                $0.removeFromSuperview()
+            }
+            arrangeFifthForm()
         }
-        arrangeFifthForm()
     }
     
     @objc func arrangeFifthForm() {
@@ -524,13 +677,17 @@ class PlanRequestViewController: UIViewController {
     }
     
     @objc func processFifthForm() {
-        // set struct instance value
-        workoutPlanRequest.goal = goalField.text!
-        // clear form and proceed
-        formStack.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
+        if (!goalField.hasText) {
+            createAlert(title: nil, message: "Please select your goal")
+        } else {
+            // set struct instance value
+            workoutPlanRequest.goal = goalField.text!
+            // clear form and proceed
+            formStack.arrangedSubviews.forEach {
+                $0.removeFromSuperview()
+            }
+            arrangeSixthForm()
         }
-        arrangeSixthForm()
     }
     
     @objc func arrangeSixthForm() {
@@ -564,71 +721,127 @@ class PlanRequestViewController: UIViewController {
     }
     
     func setupConstraintsFirstForm() {
-        maleButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        maleButton.topAnchor.constraint(equalTo: firstQuestionLabel.bottomAnchor, constant: 40).isActive = true
-        maleButton.bottomAnchor.constraint(equalTo: femaleButton.topAnchor, constant: -20).isActive = true
-        
-        femaleButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-        formStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
-        formStack.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -50).isActive = true
-        formStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        formStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
-        
-        startButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        startButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        startButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            userDetailHeader.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            userDetailHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            userDetailHeader.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            userDetailHeader.heightAnchor.constraint(equalToConstant: 40),
+            
+            maleButton.heightAnchor.constraint(equalToConstant: 40),
+            maleButton.topAnchor.constraint(equalTo: firstQuestionLabel.bottomAnchor, constant: 40),
+            maleButton.bottomAnchor.constraint(equalTo: femaleButton.topAnchor, constant: -20),
+            
+            femaleButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            formStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            formStack.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -50),
+            formStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            formStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            startButton.heightAnchor.constraint(equalToConstant: 40),
+            startButton.bottomAnchor.constraint(equalTo: homeButton.topAnchor, constant: -10),
+            startButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            startButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            homeButton.heightAnchor.constraint(equalToConstant: 40),
+            homeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            homeButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            homeButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            infoContainer.topAnchor.constraint(equalTo: userDetailHeader.bottomAnchor, constant: 20),
+            infoContainer.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -20),
+            infoContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            infoContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            infoOneHeaderLabel.topAnchor.constraint(equalTo: infoContainer.topAnchor, constant: 40),
+            infoOneHeaderLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoOneHeaderLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            
+            infoOneLabel.topAnchor.constraint(equalTo: infoOneHeaderLabel.bottomAnchor, constant: 7),
+            infoOneLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoOneLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            
+            infoTwoHeaderLabel.topAnchor.constraint(equalTo: infoOneLabel.bottomAnchor, constant: 40),
+            infoTwoHeaderLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoTwoHeaderLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            
+            infoTwoLabel.topAnchor.constraint(equalTo: infoTwoHeaderLabel.bottomAnchor, constant: 7),
+            infoTwoLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoTwoLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            
+            infoThreeHeaderLabel.topAnchor.constraint(equalTo: infoTwoLabel.bottomAnchor, constant: 40),
+            infoThreeHeaderLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoThreeHeaderLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor),
+            
+            infoThreeLabel.topAnchor.constraint(equalTo: infoThreeHeaderLabel.bottomAnchor, constant: 7),
+            infoThreeLabel.leadingAnchor.constraint(equalTo: infoContainer.leadingAnchor),
+            infoThreeLabel.trailingAnchor.constraint(equalTo: infoContainer.trailingAnchor)
+        ])
     }
     
     func setupConstraintsSecondForm() {
-        secondQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
-        
-        birthdayField.bottomAnchor.constraint(equalTo: ageSubmitButton.topAnchor, constant: -50).isActive = true
-        birthdayField.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        birthdayField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        birthdayField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        ageSubmitButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            secondQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            
+            birthdayField.bottomAnchor.constraint(equalTo: ageSubmitButton.topAnchor, constant: -50),
+            birthdayField.widthAnchor.constraint(equalToConstant: 300),
+            birthdayField.heightAnchor.constraint(equalToConstant: 40),
+            birthdayField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            ageSubmitButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     func setupConstraintsThirdForm() {
-        thirdQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
-        
-        heightField.bottomAnchor.constraint(equalTo: heightSubmitButton.topAnchor, constant: -50).isActive = true
-        heightField.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        heightField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        heightField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        heightSubmitButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            thirdQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            
+            heightField.bottomAnchor.constraint(equalTo: heightSubmitButton.topAnchor, constant: -50),
+            heightField.widthAnchor.constraint(equalToConstant: 300),
+            heightField.heightAnchor.constraint(equalToConstant: 40),
+            heightField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            heightSubmitButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     func setupConstraintsFourthForm() {
-        fourthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
-        
-        weightField.bottomAnchor.constraint(equalTo: weightSubmitButton.topAnchor, constant: -50).isActive = true
-        weightField.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        weightField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        weightField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        weightSubmitButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            fourthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            
+            weightField.bottomAnchor.constraint(equalTo: weightSubmitButton.topAnchor, constant: -50),
+            weightField.widthAnchor.constraint(equalToConstant: 300),
+            weightField.heightAnchor.constraint(equalToConstant: 40),
+            weightField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            weightSubmitButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     func setupConstraintsFifthForm() {
-        fifthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
-        
-        goalField.bottomAnchor.constraint(equalTo: goalSubmitButton.topAnchor, constant: -50).isActive = true
-        goalField.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        goalField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        goalField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        goalSubmitButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            fifthQuestionLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            
+            goalField.bottomAnchor.constraint(equalTo: goalSubmitButton.topAnchor, constant: -50),
+            goalField.widthAnchor.constraint(equalToConstant: 300),
+            goalField.heightAnchor.constraint(equalToConstant: 40),
+            goalField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            goalSubmitButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
     
     func setupConstraintsSixthForm() {
-        generatePlanInfoLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10).isActive = true
-        
-        generatePlanButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            generatePlanInfoLabel.topAnchor.constraint(equalTo: formStack.topAnchor, constant: 10),
+            
+            generatePlanButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
 }
 

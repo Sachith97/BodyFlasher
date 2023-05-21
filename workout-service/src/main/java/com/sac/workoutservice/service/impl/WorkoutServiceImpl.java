@@ -179,6 +179,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     private WorkoutDao extractUserWorkoutInfo(UserWorkout userWorkout) {
         return WorkoutDao.builder()
                 .goal(userWorkout.getWorkoutGoal().getName())
+                .imageName(userWorkout.getWorkoutGoal().getImageName())
                 .experience(userWorkout.getExperience() != null ? userWorkout.getExperience().getName() : null)
                 .workoutCategory(userWorkout.getWorkoutCategory().getName())
                 .workoutList(
@@ -195,7 +196,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .workoutName(userWorkoutDetail.getFkWorkoutPlan().getWorkoutName())
                 .instructions(userWorkoutDetail.getFkWorkoutPlan().getInstructions())
                 .day(userWorkoutDetail.getFkWorkoutPlan().getDay())
-                .allocatedSeconds(userWorkoutDetail.getFkWorkoutPlan().getAllocatedSeconds())
+                .allocatedSeconds(userWorkoutDetail.getRequestedSeconds() != null ? userWorkoutDetail.getRequestedSeconds() : userWorkoutDetail.getFkWorkoutPlan().getAllocatedSeconds())
                 .completedSeconds(userWorkoutDetail.getCompletedSeconds())
                 .imageName(userWorkoutDetail.getFkWorkoutPlan().getImageName())
                 .resourceURL(userWorkoutDetail.getFkWorkoutPlan().getResourceURL())

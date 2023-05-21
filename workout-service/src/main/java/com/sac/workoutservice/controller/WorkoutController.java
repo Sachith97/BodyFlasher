@@ -39,7 +39,7 @@ public class WorkoutController {
         return workoutService.saveCustomWorkoutPlanRequest(customWorkoutPlanRequest);
     }
 
-    @GetMapping(path = "/user/workouts", produces = {"application/json"}, consumes = {"application/json"})
+    @GetMapping(path = "/user/workouts", produces = {"application/json"})
     public List<WorkoutDao> getUserWorkoutPlans() {
         return workoutService.getUserWorkoutList();
     }

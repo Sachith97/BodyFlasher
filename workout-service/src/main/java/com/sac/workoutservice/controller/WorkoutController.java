@@ -43,9 +43,4 @@ public class WorkoutController {
     public List<WorkoutDao> getUserWorkoutPlans() {
         return workoutService.getUserWorkoutList();
     }
-
-    @GetMapping(path = "/goals", produces = {"application/json"})
-    public List<String> findGoals() {
-        return workoutService.getGoalList();
-    }
 }

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Sachith Harshamal
@@ -122,11 +121,6 @@ public class WorkoutServiceImpl implements WorkoutService {
         return workoutList.stream()
                 .map(this::extractUserWorkoutInfo)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> getGoalList() {
-        return Stream.of(WorkoutGoal.values()).map(WorkoutGoal::getName).collect(Collectors.toList());
     }
 
     private List<WorkoutDao> extractMasterWorkoutInfo(Map<WorkoutGoal, List<WorkoutPlan>> planListMap) {

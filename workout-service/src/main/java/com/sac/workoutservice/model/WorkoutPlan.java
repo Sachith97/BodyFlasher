@@ -2,12 +2,12 @@ package com.sac.workoutservice.model;
 
 import com.sac.workoutservice.enums.WorkoutExperience;
 import com.sac.workoutservice.enums.WorkoutGoal;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**

@@ -380,7 +380,6 @@ class CustomPlanCreateViewController: UIViewController {
         
         let workoutVC = WorkoutViewController()
         workoutVC.authDetail = self.authDetail
-        workoutVC.goalData = self.selectedGoalData
         workoutVC.exerciseData = self.selectedExerciseData
         self.navigationController?.pushViewController(workoutVC, animated: true)
     }

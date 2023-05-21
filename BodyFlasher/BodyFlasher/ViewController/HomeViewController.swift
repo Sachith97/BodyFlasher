@@ -205,7 +205,10 @@ class HomeViewController: UIViewController {
 //    }
     
     @objc func goToWorkoutPlanList() {
-        
+        let myWorkoutListVC = MyWorkoutListViewController()
+        myWorkoutListVC.authDetail = self.authDetail
+        myWorkoutListVC.headerText = "WORKOUT PLANS"
+        self.navigationController?.pushViewController(myWorkoutListVC, animated: true)
     }
     
     @objc func goToCustomPlanCreate(_ gesture: UITapGestureRecognizer) {

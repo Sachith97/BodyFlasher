@@ -15,7 +15,6 @@ class WorkoutViewController: UIViewController {
     }
     
     var authDetail: LoginResponseDetail = LoginResponseDetail()
-    var goalData: GoalData!
     var exerciseData: ExerciseData!
     
     var timer: Timer?

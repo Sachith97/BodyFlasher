@@ -147,7 +147,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         // hide default nav bar
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        self.navigationItem.setHidesBackButton(true, animated: true)
         
         // set background image
         self.view.insertSubview(backgroundView, at: 0)

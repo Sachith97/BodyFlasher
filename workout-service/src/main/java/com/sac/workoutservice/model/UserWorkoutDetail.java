@@ -28,6 +28,9 @@ public class UserWorkoutDetail implements Serializable {
     @Column(name = "ID")
     private Long id;
 
+    @Column(name = "REQUESTED_SECONDS")
+    private Integer requestedSeconds;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "STARTED_DATE")
     private Date startedDate;

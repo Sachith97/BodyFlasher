@@ -1,5 +1,6 @@
 package com.sac.workoutservice.service.impl;
 
+import com.sac.workoutservice.dao.CustomWorkoutPlanRequestDao;
 import com.sac.workoutservice.dao.WorkoutDao;
 import com.sac.workoutservice.dao.WorkoutDetailDao;
 import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
@@ -56,7 +57,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     public CommonResponse saveWorkoutPlanRequest(WorkoutPlanRequestDao workoutPlanRequest) {
         Optional<User> user = userService.getLoggedInUser();
         if (!user.isPresent()) {
-            return new CommonResponse(Response.NOT_FOUND);
+            return new CommonResponse(Response.UNAUTHORIZED);
         }
         // find previous workouts for selected goal and remove
         WorkoutGoal workoutGoal = WorkoutGoal.get(workoutPlanRequest.getGoal());
@@ -84,6 +85,30 @@ public class WorkoutServiceImpl implements WorkoutService {
                         user.get().getBmiValue()
                 );
         workoutPlanList.forEach(plan -> this.saveWorkoutPlan(plan, userWorkout));
+        return new CommonResponse(Response.SUCCESS);
+    }
+
+    @Override
+    public CommonResponse saveCustomWorkoutPlanRequest(CustomWorkoutPlanRequestDao customWorkoutPlanRequest) {
+        Optional<User> user = userService.getLoggedInUser();
+        if (!user.isPresent()) {
+            return new CommonResponse(Response.UNAUTHORIZED);
+        }
+        Optional<WorkoutPlan> workoutPlan = workoutPlanRepository.findById(customWorkoutPlanRequest.getExerciseId().longValue());
+        if (!workoutPlan.isPresent()) {
+            return new CommonResponse(Response.NOT_FOUND);
+        }
+        UserWorkout userWorkout = UserWorkout.builder()
+                .workoutGoal(workoutPlan.get().getWorkoutGoal())
+                .fkUser(user.get())
+                .build();
+        userWorkoutRepository.save(userWorkout);
+        UserWorkoutDetail userWorkoutDetail = UserWorkoutDetail.builder()
+                .requestedSeconds(customWorkoutPlanRequest.getRequestedSeconds())
+                .fkUserWorkout(userWorkout)
+                .fkWorkoutPlan(workoutPlan.get())
+                .build();
+        userWorkoutDetailRepository.save(userWorkoutDetail);
         return new CommonResponse(Response.SUCCESS);
     }
 

@@ -1,5 +1,6 @@
 package com.sac.workoutservice.controller;
 
+import com.sac.workoutservice.dao.CustomWorkoutPlanRequestDao;
 import com.sac.workoutservice.dao.WorkoutDao;
 import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
 import com.sac.workoutservice.exception.CommonResponse;
@@ -31,6 +32,11 @@ public class WorkoutController {
     @PostMapping(path = "/request", produces = {"application/json"}, consumes = {"application/json"})
     public CommonResponse saveWorkoutPlanRequest(@RequestBody WorkoutPlanRequestDao workoutPlanRequest) {
         return workoutService.saveWorkoutPlanRequest(workoutPlanRequest);
+    }
+
+    @PostMapping(path = "/request/custom", produces = {"application/json"}, consumes = {"application/json"})
+    public CommonResponse saveCustomWorkoutPlanRequest(@RequestBody CustomWorkoutPlanRequestDao customWorkoutPlanRequest) {
+        return workoutService.saveCustomWorkoutPlanRequest(customWorkoutPlanRequest);
     }
 
     @GetMapping(path = "/user/workouts", produces = {"application/json"}, consumes = {"application/json"})

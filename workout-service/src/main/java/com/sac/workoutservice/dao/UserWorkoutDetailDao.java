@@ -14,8 +14,10 @@ import lombok.Data;
 public class UserWorkoutDetailDao {
 
     private String workoutName;
+    private String instructions;
     private Integer day;
     private Integer allocatedSeconds;
     private Integer completedSeconds;
+    private String imageName;
     private String resourceURL;
 }

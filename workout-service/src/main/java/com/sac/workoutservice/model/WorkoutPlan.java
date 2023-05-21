@@ -40,6 +40,9 @@ public class WorkoutPlan implements Serializable {
     @Column(name = "WORKOUT_NAME", length = 100)
     private String workoutName;
 
+    @Column(name = "INSTRUCTIONS", length = 3000)
+    private String instructions;
+
     @Column(name = "ORDER_", length = 5)
     private Integer order;
 
@@ -54,6 +57,9 @@ public class WorkoutPlan implements Serializable {
 
     @Column(name = "ALLOCATED_SECONDS")
     private Integer allocatedSeconds;
+
+    @Column(name = "IMAGE_NAME")
+    private String imageName;
 
     @Column(name = "RESOURCE_URL", length = 500)
     private String resourceURL;

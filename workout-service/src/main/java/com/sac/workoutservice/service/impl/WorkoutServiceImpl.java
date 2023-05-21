@@ -122,6 +122,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private WorkoutDetailDao extractMasterWorkoutDetailInfo(WorkoutPlan workoutPlan) {
         return WorkoutDetailDao.builder()
+                .id(workoutPlan.getId().intValue())
                 .workoutName(workoutPlan.getWorkoutName())
                 .instructions(workoutPlan.getInstructions())
                 .day(workoutPlan.getDay())
@@ -165,6 +166,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private WorkoutDetailDao extractUserWorkoutDetailInfo(UserWorkoutDetail userWorkoutDetail) {
         return WorkoutDetailDao.builder()
+                .id(userWorkoutDetail.getFkWorkoutPlan().getId().intValue())
                 .workoutName(userWorkoutDetail.getFkWorkoutPlan().getWorkoutName())
                 .instructions(userWorkoutDetail.getFkWorkoutPlan().getInstructions())
                 .day(userWorkoutDetail.getFkWorkoutPlan().getDay())

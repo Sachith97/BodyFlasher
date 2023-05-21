@@ -13,6 +13,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class WorkoutDetailDao {
 
+    private Integer id;
     private String workoutName;
     private String instructions;
     private Integer day;

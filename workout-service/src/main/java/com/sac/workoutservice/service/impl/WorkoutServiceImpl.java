@@ -5,6 +5,7 @@ import com.sac.workoutservice.dao.WorkoutDao;
 import com.sac.workoutservice.dao.WorkoutDetailDao;
 import com.sac.workoutservice.dao.WorkoutPlanRequestDao;
 import com.sac.workoutservice.enums.Response;
+import com.sac.workoutservice.enums.WorkoutCategory;
 import com.sac.workoutservice.enums.WorkoutGoal;
 import com.sac.workoutservice.exception.CommonResponse;
 import com.sac.workoutservice.model.User;
@@ -65,6 +66,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         // proceed with new request
         UserWorkout userWorkout = UserWorkout.builder()
                 .workoutGoal(workoutGoal)
+                .workoutCategory(WorkoutCategory.INSTRUCT)
                 .fkUser(user.get())
                 .build();
         userWorkoutRepository.save(userWorkout);
@@ -99,6 +101,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         UserWorkout userWorkout = UserWorkout.builder()
                 .workoutGoal(workoutPlan.get().getWorkoutGoal())
+                .workoutCategory(WorkoutCategory.CUSTOM)
                 .fkUser(user.get())
                 .build();
         userWorkoutRepository.save(userWorkout);
@@ -130,6 +133,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                         .goal(goal.getName())
                         .imageName(goal.getImageName())
                         .experience(null)
+                        .workoutCategory(null)
                         .workoutList(
                                 planList.stream()
                                         .map(this::extractMasterWorkoutDetailInfo)
@@ -176,6 +180,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         return WorkoutDao.builder()
                 .goal(userWorkout.getWorkoutGoal().getName())
                 .experience(userWorkout.getExperience() != null ? userWorkout.getExperience().getName() : null)
+                .workoutCategory(userWorkout.getWorkoutCategory().getName())
                 .workoutList(
                         userWorkout.getWorkoutList().stream()
                                 .map(this::extractUserWorkoutDetailInfo)

@@ -18,5 +18,6 @@ public class WorkoutDao {
     private String goal;
     private String imageName;
     private String experience;
+    private String workoutCategory;
     private List<WorkoutDetailDao> workoutList;
 }

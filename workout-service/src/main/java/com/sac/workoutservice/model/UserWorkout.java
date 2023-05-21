@@ -1,5 +1,6 @@
 package com.sac.workoutservice.model;
 
+import com.sac.workoutservice.enums.WorkoutCategory;
 import com.sac.workoutservice.enums.WorkoutExperience;
 import com.sac.workoutservice.enums.WorkoutGoal;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,10 @@ public class UserWorkout implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "WORKOUT_GOAL", nullable = false)
     private WorkoutGoal workoutGoal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "WORKOUT_CAT")
+    private WorkoutCategory workoutCategory;
 
     @ManyToOne
     @JoinColumn(name = "FK_USER")

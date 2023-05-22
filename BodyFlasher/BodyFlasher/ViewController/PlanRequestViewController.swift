@@ -463,9 +463,9 @@ class PlanRequestViewController: UIViewController {
     }
     
     @objc func goToHome() {
-        let homeVC = HomeViewController()
-        homeVC.authDetail = self.authDetail
-        self.navigationController?.pushViewController(homeVC, animated: true)
+        let homeTabVC = TabViewController()
+        homeTabVC.authDetail = self.authDetail
+        self.navigationController?.pushViewController(homeTabVC, animated: true)
     }
     
     func createAlert(title: String?, message: String) {
@@ -717,9 +717,7 @@ class PlanRequestViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.spinnerHandler.handle(source: self.view, spinner: self.spinner, status: false)
                     if (response.ok ?? false) {
-                        let homeVC = HomeViewController()
-                        homeVC.authDetail = self.authDetail
-                        self.navigationController?.pushViewController(homeVC, animated: true)
+                        self.goToHome()
                     }
                 }
             case .failure(let error):

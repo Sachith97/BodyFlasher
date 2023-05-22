@@ -7,15 +7,9 @@
 
 import UIKit
 
-//protocol HomeViewControllerDelegate: AnyObject {
-//    func didTapMenuButton()
-//}
-
 class HomeViewController: UIViewController {
     
     var authDetail: LoginResponseDetail = LoginResponseDetail()
-    
-//    weak var delegate: HomeViewControllerDelegate?
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -151,13 +145,6 @@ class HomeViewController: UIViewController {
         
         // set background image
         self.view.insertSubview(backgroundView, at: 0)
-//        self.view.backgroundColor = UIColor(cgColor: CGColor(red: 16/255, green: 17/255, blue: 18/255, alpha: 1.0))
-        
-        // slider menu
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
-//                                                           style: .done,
-//                                                           target: self,
-//                                                           action: #selector(didTapMenuButton))
         
         // set user's details
         self.userDetailHeader.usernameLabel.text = (self.authDetail.user?.firstName ?? "Anonymous") + " " + (self.authDetail.user?.lastName ?? "User")
@@ -199,10 +186,6 @@ class HomeViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
-    
-//    @objc func didTapMenuButton() {
-//        delegate?.didTapMenuButton()
-//    }
     
     @objc func goToWorkoutPlanList() {
         let myWorkoutListVC = MyWorkoutListViewController()

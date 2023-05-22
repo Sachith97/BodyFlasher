@@ -74,6 +74,23 @@ class PlanRequestViewController: UIViewController {
         return button
     }()
     
+    let closeContainer: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.layer.cornerRadius = 10
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let closeButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.addTarget(self, action: #selector(closeRequest), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     let infoContainer: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 10
@@ -413,6 +430,9 @@ class PlanRequestViewController: UIViewController {
         heightData = heightDataValues.map(String.init)
         weightData = weightDataValues.map(String.init)
         
+        closeButton.tintColor = .white
+        closeContainer.addSubview(closeButton)
+        
         // initialize stack views
         formStack.addSubview(firstQuestionLabel)
         formStack.addSubview(maleButton)
@@ -429,6 +449,7 @@ class PlanRequestViewController: UIViewController {
         view.addSubview(spinner)
         view.addSubview(backgroundView)
         view.addSubview(userDetailHeader)
+        view.addSubview(closeContainer)
         view.addSubview(formStack)
         view.addSubview(startButton)
         view.addSubview(homeButton)
@@ -453,7 +474,25 @@ class PlanRequestViewController: UIViewController {
         paused = true
     }
     
+    @objc func closeRequest() {
+        let alert = UIAlertController(title: "Confirmation", message: "Are you sure you want to exit from plan creation?", preferredStyle: .alert)
+        
+        // create a "Confirm" action
+        let confirmAction = UIAlertAction(title: "Confirm", style: .destructive) { (_) in
+            self.goToHome()
+        }
+        alert.addAction(confirmAction)
+        
+        // create a "Cancel" action
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
+        
+        // present the alert
+        present(alert, animated: true, completion: nil)
+    }
+    
     @objc func enableSurvey() {
+        closeContainer.isHidden = false
         formStack.isHidden = false
         startButton.isHidden = true
         homeButton.isHidden = true
@@ -747,7 +786,16 @@ class PlanRequestViewController: UIViewController {
             userDetailHeader.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             userDetailHeader.heightAnchor.constraint(equalToConstant: 40),
             
-            formStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            closeContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            closeContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            closeContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            closeContainer.heightAnchor.constraint(equalToConstant: 60),
+            
+            closeButton.topAnchor.constraint(equalTo: closeContainer.topAnchor, constant: 10),
+            closeButton.trailingAnchor.constraint(equalTo: closeContainer.trailingAnchor, constant: -20),
+            closeButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            formStack.topAnchor.constraint(equalTo: closeContainer.bottomAnchor, constant: 10),
             formStack.bottomAnchor.constraint(equalTo: startButton.topAnchor, constant: -50),
             formStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             formStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),

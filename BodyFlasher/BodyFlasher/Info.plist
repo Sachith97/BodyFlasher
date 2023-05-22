@@ -19,5 +19,8 @@
 			</array>
 		</dict>
 	</dict>
+    <!-- heart rate accessing permission -->
+    <key>NSHealthShareUsageDescription</key>
+    <string>Access to heart rate data is required for tracking your workout progress.</string>
 </dict>
 </plist>

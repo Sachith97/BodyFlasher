@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import HealthKit
 
 class WorkoutViewController: UIViewController {
 
@@ -22,6 +23,10 @@ class WorkoutViewController: UIViewController {
     let impactFeedBackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
     var timerstate: TimerState = .paused
+    
+    let healthStore = HKHealthStore()
+    let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate)!
+    var heartRateQuery: HKQuery?
     
     let backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -107,6 +112,41 @@ class WorkoutViewController: UIViewController {
         return stackView
     }()
     
+    let heartImage: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    let heartRateLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .right
+        label.text = "0"
+        label.font = UIFont(name:"AppleSDGothicNeo-Bold", size: 22.0)
+        label.backgroundColor = UIColor.clear
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let heartRateUnitLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .left
+        label.text = "BPM"
+        label.font = UIFont(name:"AppleSDGothicNeo-Regular", size: 13.0)
+        label.backgroundColor = UIColor.clear
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let heartInfoContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -129,11 +169,29 @@ class WorkoutViewController: UIViewController {
         decisionButtonStack.addArrangedSubview(startPauseButton)
         decisionButtonStack.addArrangedSubview(resetButton)
         
+        // accessing heart rate info
+        startHeartRateUpdates()
+        
+        // load heart gif file into uiimage
+        if let gifPath = Bundle.main.path(forResource: "heart-beating", ofType: "gif") {
+            let gifURL = URL(fileURLWithPath: gifPath)
+            if let gifData = try? Data(contentsOf: gifURL) {
+                if let gifImage = UIImage.gifImageWithData(gifData) {
+                    heartImage.image = gifImage
+                }
+            }
+        }
+        
+        self.heartInfoContainer.addSubview(heartImage)
+        self.heartInfoContainer.addSubview(heartRateLabel)
+        self.heartInfoContainer.addSubview(heartRateUnitLabel)
+        
         self.view.addSubview(workoutNameLabel)
         self.view.addSubview(instructionLabel)
         self.view.addSubview(timerLabel)
         self.view.layer.addSublayer(timerCircle)
         self.view.addSubview(decisionButtonStack)
+        self.view.addSubview(heartInfoContainer)
         
         setupConstraints()
     }
@@ -206,6 +264,47 @@ class WorkoutViewController: UIViewController {
         CATransaction.commit()
     }
     
+    func startHeartRateUpdates() {
+        // create a predicate to query the most recent heart rate samples
+        let predicate = HKQuery.predicateForSamples(withStart: Date.distantPast, end: nil, options: .strictEndDate)
+        
+        // create a query to retrieve heart rate samples
+        let query = HKAnchoredObjectQuery(type: heartRateType, predicate: predicate, anchor: nil, limit: HKObjectQueryNoLimit) { (query, samples, deletedObjects, anchor, error) in
+            guard let samples = samples as? [HKQuantitySample] else {
+                return
+            }
+            
+            // process the heart rate samples
+            self.processHeartRateSamples(samples)
+        }
+        
+        // set the update handler for real-time updates
+        query.updateHandler = { (query, samples, deletedObjects, anchor, error) in
+            guard let samples = samples as? [HKQuantitySample] else {
+                return
+            }
+            
+            // process the heart rate samples
+            self.processHeartRateSamples(samples)
+        }
+        
+        // execute the query
+        healthStore.execute(query)
+        heartRateQuery = query
+    }
+    
+    func processHeartRateSamples(_ samples: [HKQuantitySample]) {
+        for sample in samples {
+            
+            let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
+            let heartRateValue = sample.quantity.doubleValue(for: heartRateUnit)
+            
+            DispatchQueue.main.async {
+                self.heartRateLabel.text = String(Int(heartRateValue))
+            }
+        }
+    }
+    
     func setupConstraints() {
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -232,9 +331,50 @@ class WorkoutViewController: UIViewController {
             resetButton.heightAnchor.constraint(equalToConstant: 40),
             
             decisionButtonStack.topAnchor.constraint(equalTo: timerLabel.bottomAnchor, constant: 140),
-            decisionButtonStack.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+            decisionButtonStack.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             
+            heartInfoContainer.topAnchor.constraint(equalTo: decisionButtonStack.topAnchor, constant: 50),
+            heartInfoContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            heartInfoContainer.widthAnchor.constraint(equalToConstant: 150),
+            heartInfoContainer.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            
+            heartImage.centerYAnchor.constraint(equalTo: heartInfoContainer.centerYAnchor),
+            heartImage.leadingAnchor.constraint(equalTo: heartInfoContainer.leadingAnchor),
+            heartImage.widthAnchor.constraint(equalToConstant: 55),
+            heartImage.heightAnchor.constraint(equalToConstant: 55),
+            
+            heartRateLabel.centerYAnchor.constraint(equalTo: heartInfoContainer.centerYAnchor),
+            heartRateLabel.leadingAnchor.constraint(equalTo: heartImage.trailingAnchor, constant: 20),
+            
+            heartRateUnitLabel.centerYAnchor.constraint(equalTo: heartInfoContainer.centerYAnchor),
+            heartRateUnitLabel.leadingAnchor.constraint(equalTo: heartRateLabel.trailingAnchor, constant: 7),
+            heartRateUnitLabel.trailingAnchor.constraint(equalTo: heartInfoContainer.trailingAnchor)
         ])
     }
 
 }
+
+extension UIImage {
+    class func gifImageWithData(_ data: Data) -> UIImage? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+            return nil
+        }
+        
+        let count = CGImageSourceGetCount(source)
+        var images = [UIImage]()
+        
+        for i in 0..<count {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                let image = UIImage(cgImage: cgImage)
+                images.append(image)
+            }
+        }
+        
+        if images.count > 0 {
+            return UIImage.animatedImage(with: images, duration: 0.0)
+        }
+        
+        return nil
+    }
+}
+

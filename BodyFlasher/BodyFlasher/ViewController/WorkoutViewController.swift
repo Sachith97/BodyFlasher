@@ -370,8 +370,8 @@ extension UIImage {
             }
         }
         
-        if images.count > 0 {
-            return UIImage.animatedImage(with: images, duration: 0.0)
+        if (images.count > 0) {
+            return UIImage.animatedImage(with: images, duration: 1.0)
         }
         
         return nil

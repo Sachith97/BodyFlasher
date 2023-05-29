@@ -321,7 +321,7 @@ class WorkoutViewController: UIViewController {
             instructionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             timerLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            timerLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -30),
+            timerLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             
             startPauseButton.trailingAnchor.constraint(equalTo: resetButton.leadingAnchor, constant: -10),
             startPauseButton.widthAnchor.constraint(equalToConstant: 80),

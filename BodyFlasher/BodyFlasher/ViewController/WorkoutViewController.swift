@@ -169,6 +169,9 @@ class WorkoutViewController: UIViewController {
         decisionButtonStack.addArrangedSubview(startPauseButton)
         decisionButtonStack.addArrangedSubview(resetButton)
         
+        let rightBarButton = UIBarButtonItem(title: "Remove", style: .plain, target: self, action: #selector(removeWorkout))
+        navigationItem.rightBarButtonItem = rightBarButton
+        
         // accessing heart rate info
         startHeartRateUpdates()
         
@@ -194,6 +197,21 @@ class WorkoutViewController: UIViewController {
         self.view.addSubview(heartInfoContainer)
         
         setupConstraints()
+    }
+    
+    @objc func removeWorkout() {
+        let alert = UIAlertController(title: "Confirmation", message: "Are you sure you want to remove?", preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "Confirm", style: .destructive) { (_) in
+            // todo: remove implementation
+            self.createAlert(title: nil, message: "Successfully removed")
+        }
+        alert.addAction(confirmAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func startPauseTimer() {
@@ -303,6 +321,12 @@ class WorkoutViewController: UIViewController {
                 self.heartRateLabel.text = String(Int(heartRateValue))
             }
         }
+    }
+    
+    func createAlert(title: String?, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func setupConstraints() {

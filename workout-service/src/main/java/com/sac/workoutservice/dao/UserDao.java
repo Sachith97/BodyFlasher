@@ -20,5 +20,6 @@ public class UserDao {
     private Integer age;
     private Integer weight;
     private Integer height;
+    private Double bmiValue;
     private String username;
 }

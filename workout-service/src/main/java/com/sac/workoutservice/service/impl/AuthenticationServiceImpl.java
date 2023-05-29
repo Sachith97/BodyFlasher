@@ -75,6 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .age(user.getAge())
                 .weight(user.getWeight())
                 .height(user.getHeight())
+                .bmiValue(user.getBmiValue())
                 .username(user.getUsername())
                 .build();
     }

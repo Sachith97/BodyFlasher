@@ -330,10 +330,10 @@ class WorkoutViewController: UIViewController {
             resetButton.widthAnchor.constraint(equalToConstant: 80),
             resetButton.heightAnchor.constraint(equalToConstant: 40),
             
-            decisionButtonStack.topAnchor.constraint(equalTo: timerLabel.bottomAnchor, constant: 160),
+            decisionButtonStack.topAnchor.constraint(equalTo: timerLabel.bottomAnchor, constant: 130),
             decisionButtonStack.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             
-            heartInfoContainer.topAnchor.constraint(equalTo: decisionButtonStack.topAnchor, constant: 40),
+            heartInfoContainer.topAnchor.constraint(equalTo: decisionButtonStack.topAnchor, constant: 50),
             heartInfoContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             heartInfoContainer.widthAnchor.constraint(equalToConstant: 150),
             heartInfoContainer.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
